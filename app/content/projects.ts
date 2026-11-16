@@ -108,6 +108,45 @@ export const projects: Project[] = [
     ],
     links: { live: 'https://compufest.pages.dev', caseStudy: '/proyectos/compufest-26' }
   },
+  {
+    slug: 'nexis-oaxaca',
+    number: '04',
+    name: 'Nexis Oaxaca · Plataforma de eventos',
+    summary: 'Una versión propia y acotada de Meetup para la comunidad Nexis Oaxaca: cuentas, registro a eventos con gafete QR, check-in en la puerta, eventos en línea y panel de administración.',
+    year: '2026',
+    role: 'Fullstack Developer (único desarrollador)',
+    featured: true,
+    draft: false,
+    problem: 'Gestionábamos los eventos en Meetup, pero pagar la suscripción salía caro para una comunidad sin fines de lucro, no controlábamos el flujo de registro ni los datos de los asistentes, y había cosas de la plataforma que no nos gustaban.',
+    decision: 'Definí un PRD con las funciones indispensables y lo construí con agentes de código en paralelo: Nuxt 4 en Cloudflare Workers, Supabase para autenticación (correo y Google) y PostgreSQL con Row Level Security para los roles, R2 para archivos y Resend para correos.',
+    result: 'Una plataforma de eventos propia con costo de operación de $0, con los datos y el flujo bajo control de la comunidad y los 30 encuentros anteriores migrados desde el CMS.',
+    metric: '$0 de costo de operación',
+    stack: ['NuxtJS', 'Vue.js', 'TypeScript', 'Cloudflare Workers', 'Supabase', 'PostgreSQL', 'Cloudflare R2', 'Tailwind CSS'],
+    cover: null,
+    images: [
+      { src: '/projects/nexis/1.png', width: 1885, height: 923, alt: 'Portada de Nexis Oaxaca: “Descubre hasta dónde puedes llegar en tecnología.”, con la iguana de circuitos y el acceso a Mi cuenta' },
+      { src: '/projects/nexis/2.png', width: 1885, height: 923, alt: 'Inicio de sesión con Google o con correo y contraseña' },
+      { src: '/projects/nexis/3.png', width: 1885, height: 923, alt: 'Página de encuentros con el próximo evento destacado: modalidad, fecha, sede y ponente' },
+      { src: '/projects/nexis/4.png', width: 1885, height: 923, alt: 'Formulario de registro a un evento sin sesión: nombre y correo, con aviso de que el registro cierra 15 minutos después del inicio' },
+      { src: '/projects/nexis/5.png', width: 1885, height: 923, alt: 'Confirmación del registro: el gafete con código QR se envía por correo junto con el enlace para liberar el lugar' },
+      { src: '/projects/nexis/6.png', width: 1885, height: 923, alt: 'Gafete de acceso con código QR y código único visible en la página del evento para una persona con sesión' },
+      { src: '/projects/nexis/7.png', width: 1854, height: 927, alt: 'Correo con el gafete de acceso, la fecha, la sede y el enlace para liberar el lugar' },
+      { src: '/projects/nexis/8.png', width: 758, height: 597, alt: 'Aviso de lugar liberado, con la opción de volver a registrarse mientras haya cupo' },
+      { src: '/projects/nexis/9.png', width: 1466, height: 930, alt: 'Perfil de un miembro: profesión, cómo conoció la comunidad, avisos por correo y temas de interés' },
+      { src: '/projects/nexis/10.png', width: 1466, height: 930, alt: 'Perfil de un administrador con accesos al panel y al check-in' },
+      { src: '/projects/nexis/20.png', width: 1548, height: 928, alt: 'Sección “Mis eventos” del perfil con el historial de encuentros a los que asistió la persona' },
+      { src: '/projects/nexis/11.png', width: 1548, height: 928, alt: 'Resumen del panel: usuarios registrados, perfiles completos, temas de interés y profesiones' },
+      { src: '/projects/nexis/12.png', width: 1548, height: 928, alt: 'Gestión de eventos en el panel: filtros por próximos, pasados y borradores, con modalidad, acceso y estado' },
+      { src: '/projects/nexis/13.png', width: 1548, height: 928, alt: 'Catálogo de ponentes en el panel, con búsqueda por nombre o cargo' },
+      { src: '/projects/nexis/14.png', width: 1548, height: 928, alt: 'Gestión de aliados por tipo: comunidades, eventos, instituciones educativas, gobierno y empresas' },
+      { src: '/projects/nexis/15.png', width: 1548, height: 928, alt: 'Gestión del equipo: core team y voluntariado, en el mismo orden en que aparecen en el sitio' },
+      { src: '/projects/nexis/16.png', width: 1548, height: 928, alt: 'Bitácora inalterable con los registros, cambios de rol y asistencias, con fecha y autor' },
+      { src: '/projects/nexis/18.jpeg', width: 720, height: 1600, alt: 'Check-in desde el celular: lectura del código QR del gafete con la cámara' },
+      { src: '/projects/nexis/17.jpeg', width: 720, height: 1600, alt: 'Check-in exitoso con el contador de asistentes y el aviso de que es su primer encuentro' },
+      { src: '/projects/nexis/19.jpeg', width: 720, height: 1600, alt: 'Check-in rechazado: el gafete pertenece a alguien que liberó su lugar' }
+    ],
+    links: { live: 'https://nexisoaxaca.tech', caseStudy: '/proyectos/nexis-oaxaca' }
+  },
   // Euphoria: oculto por ahora. Para volver a mostrarlo, descomenta el bloque (y renumera).
   // {
   //   slug: 'euphoria',
@@ -135,7 +174,7 @@ export const projects: Project[] = [
   // },
   {
     slug: 'unistmo-web',
-    number: '04',
+    number: '05',
     name: 'Universidad del Istmo · Sitio web',
     summary: 'Nuevo sitio oficial de la Universidad del Istmo: rápido, adaptado a celular y con contenido que el personal publica sin depender del equipo técnico.',
     year: '2026 – hoy',
@@ -160,7 +199,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'curvex',
-    number: '05',
+    number: '06',
     name: 'Curvex',
     summary: 'Herramienta web de estadística: pruebas de hipótesis, regresiones y distribuciones de probabilidad con resultados y gráficas al instante.',
     year: '2025 – 2026',
@@ -183,7 +222,7 @@ export const projects: Project[] = [
   },
   {
     slug: 'hecho-en-casa',
-    number: '06',
+    number: '07',
     name: 'Hecho en Casa',
     summary: 'Plataforma de pedidos en línea para una pastelería local: catálogo, calendario de disponibilidad, pedidos personalizados e historial del cliente.',
     year: '2024 – 2025',

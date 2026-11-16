@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ArrowLeft, ArrowUpRight, ExternalLink, Github, Users } from 'lucide-vue-next'
+import { ArrowLeft, ArrowUpRight, ExternalLink, Github, Maximize2, Users } from 'lucide-vue-next'
 import { getProject } from '~/content/projects'
 
 const route = useRoute()
@@ -23,6 +23,9 @@ useSeoMeta({
   ogImage: `${siteUrl}${project.cover?.src ?? '/joan.jpeg'}`,
   twitterImage: `${siteUrl}${project.cover?.src ?? '/joan.jpeg'}`
 })
+
+// Visor de capturas: la portada es images[0] y la galería muestra images[1..]
+const viewerIndex = ref<number | null>(null)
 
 const section = (key: string) => caseStudy.value?.sections.find(s => s.key === key)
 
@@ -66,7 +69,23 @@ const projectInfo = computed(() => ({
           </header>
 
           <figure v-if="project.cover" class="lead-media mt-14">
+            <button
+              v-if="project.images.length"
+              type="button"
+              class="zoomable"
+              :aria-label="`Ampliar captura: ${project.cover.alt}`"
+              @click="viewerIndex = 0"
+            >
+              <ProjectImage
+                :image="project.cover"
+                sizes="(min-width: 1024px) 860px, 100vw"
+                priority
+                class="h-auto w-full"
+              />
+              <span class="zoomable__hint" aria-hidden="true"><Maximize2 class="h-4 w-4" /></span>
+            </button>
             <ProjectImage
+              v-else
               :image="project.cover"
               sizes="(min-width: 1024px) 860px, 100vw"
               priority
@@ -122,14 +141,20 @@ const projectInfo = computed(() => ({
           <ScrollReveal v-if="project.images.length > 1" as="section" class="mt-20">
             <div class="mb-8 flex items-center gap-5"><h2 class="case-h2 mb-0">Capturas</h2><span class="h-px flex-1 bg-line"></span></div>
             <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-              <figure v-for="img in project.images.slice(1)" :key="img.src" class="shot">
-                <div class="shot__frame">
+              <figure v-for="(img, i) in project.images.slice(1)" :key="img.src" class="shot">
+                <button
+                  type="button"
+                  class="shot__frame zoomable"
+                  :aria-label="`Ampliar captura: ${img.alt}`"
+                  @click="viewerIndex = i + 1"
+                >
                   <ProjectImage
                     :image="img"
                     sizes="(min-width: 768px) 420px, 100vw"
-                    class="h-full w-full object-cover object-top"
+                    class="h-full w-full object-contain"
                   />
-                </div>
+                  <span class="zoomable__hint" aria-hidden="true"><Maximize2 class="h-4 w-4" /></span>
+                </button>
                 <figcaption class="mt-3 text-sm leading-relaxed text-ink-muted">{{ img.alt }}</figcaption>
               </figure>
             </div>
@@ -180,6 +205,8 @@ const projectInfo = computed(() => ({
         </aside>
       </div>
     </div>
+
+    <ImageLightbox v-model="viewerIndex" :images="project.images" />
   </div>
 </template>
 
@@ -205,6 +232,51 @@ const projectInfo = computed(() => ({
 .shot__frame {
   aspect-ratio: 4 / 3;
   border-radius: var(--radius-card);
+}
+
+.zoomable {
+  position: relative;
+  display: block;
+  width: 100%;
+  cursor: zoom-in;
+}
+
+.zoomable :deep(img) {
+  transition: transform 500ms var(--ease-brand);
+}
+
+.zoomable:hover :deep(img) {
+  transform: scale(1.02);
+}
+
+.zoomable:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+.zoomable__hint {
+  position: absolute;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  display: grid;
+  width: 2.25rem;
+  height: 2.25rem;
+  place-items: center;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.55);
+  color: #fff;
+  opacity: 0;
+  backdrop-filter: blur(6px);
+  transition: opacity 200ms var(--ease-brand);
+}
+
+.zoomable:hover .zoomable__hint,
+.zoomable:focus-visible .zoomable__hint {
+  opacity: 1;
+}
+
+@media (hover: none) {
+  .zoomable__hint { opacity: 1; }
 }
 
 .case-h2 {

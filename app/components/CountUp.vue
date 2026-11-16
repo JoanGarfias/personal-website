@@ -35,7 +35,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-  <span ref="el" class="tabular-nums">
-    <span aria-hidden="true">{{ shown }}</span><span class="sr-only">{{ props.value }}</span>
-  </span>
+  <!-- Un solo nodo de texto: el HTML prerenderizado trae el valor final (crawlers y lectores de pantalla
+       leen "603", no "603603" como pasaba con una copia visible + otra sr-only) -->
+  <span ref="el" class="tabular-nums">{{ shown }}</span>
 </template>

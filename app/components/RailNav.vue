@@ -85,7 +85,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', place))
           <Sun v-if="theme === 'dark'" key="sun" class="rail__icon" aria-hidden="true" />
           <Moon v-else key="moon" class="rail__icon" aria-hidden="true" />
         </Transition>
-        <span class="rail__tip" aria-hidden="true">{{ theme === 'dark' ? 'Tema claro' : 'Tema oscuro' }}</span>
+        <span class="rail__tip" aria-hidden="true" :data-text="theme === 'dark' ? 'Tema claro' : 'Tema oscuro'"></span>
       </button>
 
       <ul class="rail__group" :class="{ 'has-indicator': indicator }">
@@ -110,19 +110,19 @@ onBeforeUnmount(() => window.removeEventListener('resize', place))
           >
             <component :is="item.icon" class="rail__icon" aria-hidden="true" />
             <span class="rail__label" aria-hidden="true">{{ item.label }}</span>
-            <span class="rail__tip" aria-hidden="true">{{ item.label }}</span>
+            <span class="rail__tip" aria-hidden="true" :data-text="item.label"></span>
           </NuxtLink>
         </li>
       </ul>
 
       <a href="/cv.pdf" download="CV_Joan_Garfias.pdf" class="rail__btn rail__desktop" aria-label="Descargar CV (PDF)">
         <FileDown class="rail__icon" aria-hidden="true" />
-        <span class="rail__tip" aria-hidden="true">Descargar CV</span>
+        <span class="rail__tip" aria-hidden="true" data-text="Descargar CV"></span>
       </a>
 
       <button type="button" class="rail__btn rail__desktop" aria-label="Volver arriba" @click="toTop">
         <ArrowUp class="rail__icon" aria-hidden="true" />
-        <span class="rail__tip" aria-hidden="true">Arriba</span>
+        <span class="rail__tip" aria-hidden="true" data-text="Arriba"></span>
       </button>
     </div>
 
@@ -205,6 +205,8 @@ onBeforeUnmount(() => window.removeEventListener('resize', place))
 }
 
 .rail__tip { display: none; }
+/* El texto del tooltip sale por CSS para no duplicar las etiquetas del menú en el texto de la página */
+.rail__tip::before { content: attr(data-text); }
 
 @media (max-width: 1023.98px) {
   .rail__desktop { display: none; }

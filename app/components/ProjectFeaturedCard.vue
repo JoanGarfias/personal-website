@@ -22,8 +22,9 @@ const host = computed(() => (props.project.links.live ? new URL(props.project.li
     <NuxtLink :to="project.links.caseStudy" class="featured-media" tabindex="-1" aria-hidden="true">
       <span class="featured-media__bar">
         <span class="featured-media__dots"><i></i><i></i><i></i></span>
-        <span class="featured-media__url">{{ host }}</span>
-        <span class="font-meta">{{ project.number }}</span>
+        <!-- Decorativo: el texto sale por CSS (content: attr) para no duplicar el número en el texto de la página -->
+        <span class="featured-media__url decor-text" :data-text="host"></span>
+        <span class="font-meta decor-text" :data-text="project.number"></span>
       </span>
       <span class="featured-media__shot">
       <ProjectImage
@@ -218,4 +219,8 @@ const host = computed(() => (props.project.links.live ? new URL(props.project.li
 }
 
 .case-link:hover { color: var(--accent-ink); }
+
+.decor-text::before {
+  content: attr(data-text);
+}
 </style>

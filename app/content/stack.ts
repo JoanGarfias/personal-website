@@ -30,6 +30,15 @@ export const stackGroups: { title: string; items: StackItem[] }[] = [
       { name: 'Astro', icon: 'astro.svg' },
       { name: 'Tailwind CSS', icon: 'tailwind.svg' }
     ]
+  },
+  {
+    title: 'Otras herramientas',
+    items: [
+      { name: 'Supabase', icon: 'supabase.svg' },
+      { name: 'Cloudflare Workers', icon: 'cloudflareworkers.svg' },
+      { name: 'Cloudflare Functions', icon: 'cloudflare.svg' },
+      { name: 'Cloudflare R2', icon: 'cloudflare.svg' }
+    ]
   }
 ]
 
