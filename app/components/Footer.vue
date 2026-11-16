@@ -15,7 +15,7 @@ const links = [
       <p class="text-sm text-ink-muted">
         © {{ new Date().getFullYear() }} Joan Garfias · Construyo software con propósito desde Oaxaca, México.
       </p>
-      <ul class="flex gap-2">
+      <ul class="flex flex-wrap gap-2">
         <li v-for="link in links" :key="link.label">
           <a
             :href="link.href"

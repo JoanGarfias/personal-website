@@ -65,16 +65,26 @@ const place = () => {
 }
 
 watch(current, () => nextTick(place))
+// La barra cambia de tamaño sin resize de ventana (etiquetas que aparecen/desaparecen, fuente del sistema)
+const inner = ref<HTMLElement | null>(null)
+let resizeObserver: ResizeObserver | undefined
 onMounted(() => {
   nextTick(place)
   window.addEventListener('resize', place, { passive: true })
+  if (inner.value && 'ResizeObserver' in window) {
+    resizeObserver = new ResizeObserver(() => place())
+    resizeObserver.observe(inner.value)
+  }
 })
-onBeforeUnmount(() => window.removeEventListener('resize', place))
+onBeforeUnmount(() => {
+  window.removeEventListener('resize', place)
+  resizeObserver?.disconnect()
+})
 </script>
 
 <template>
   <nav class="rail" aria-label="Principal">
-    <div class="rail__inner">
+    <div ref="inner" class="rail__inner">
       <button
         type="button"
         class="rail__btn rail__desktop"
@@ -151,14 +161,20 @@ onBeforeUnmount(() => window.removeEventListener('resize', place))
   box-shadow: var(--shadow-float);
   padding: 0.35rem;
   backdrop-filter: blur(14px);
+  /* Las etiquetas se ocultan según el ancho real de la barra (ver @container abajo) */
+  container-type: inline-size;
 }
 
 .rail__group {
   position: relative;
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: 1fr;
+  /* minmax(0, …): las columnas nunca crecen por el texto; si no, con fuente grande
+     la barra se sale de la pantalla y ensancha toda la página */
+  grid-auto-columns: minmax(0, 1fr);
 }
+
+.rail__group > li { min-width: 0; }
 
 .rail__btn {
   position: relative;
@@ -199,9 +215,20 @@ onBeforeUnmount(() => window.removeEventListener('resize', place))
 }
 
 .rail__label {
-  font-size: 0.6875rem;
+  max-width: 100%;
+  overflow: hidden;
+  font-size: 0.625rem;
   font-weight: 600;
+  letter-spacing: -0.02em;
   line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Barra estrecha (pantalla pequeña o fuente del sistema grande): solo iconos.
+   En rem para que también responda al tamaño de letra elegido por el usuario */
+@container (width < 21.5rem) {
+  .rail__label { display: none; }
 }
 
 .rail__tip { display: none; }
@@ -229,6 +256,7 @@ onBeforeUnmount(() => window.removeEventListener('resize', place))
   }
 
   .rail__inner {
+    container-type: normal;
     display: flex;
     flex-direction: column;
     gap: 0.4rem;
