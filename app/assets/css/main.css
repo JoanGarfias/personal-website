@@ -418,6 +418,8 @@ section[id],
   color: var(--text-body);
   font-size: 1.0625rem;
   line-height: 1.8;
+  /* URLs o palabras largas (p. ej. en `código`) se parten en vez de ensanchar la página en móvil */
+  overflow-wrap: break-word;
 }
 
 .prose-site > * + * { margin-top: 1.25rem; }
@@ -471,6 +473,7 @@ section[id],
   color: var(--text-strong);
   font-family: var(--font-meta);
   font-size: 0.875em;
+  overflow-wrap: anywhere;
 }
 
 .prose-site pre {
