@@ -1,6 +1,8 @@
 ---
 title: Mi paso en las mentorias de INROADS México
 tags: []
+cover: /images/blog/inroads/1794619556279.jpeg
+coverAlt: Charla con Carlos Edgardo
 description: ¿Lavas tu taza? Lo que me llevo de mi mentoría en INROADS México ☕
 seo:
   title: Un resumen de lo que viví en las mentorias de Inroads México A.C
