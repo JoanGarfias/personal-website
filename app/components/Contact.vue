@@ -118,6 +118,12 @@
 
           <p class="text-sm text-ink-muted"><span class="text-accent-ink" aria-hidden="true">*</span> Obligatorio</p>
 
+          <!-- Turnstile (solo si hay NUXT_PUBLIC_TURNSTILE_SITE_KEY): verificación anti-bots de Cloudflare -->
+          <div v-if="turnstileSiteKey" class="space-y-2">
+            <div ref="turnstileEl"></div>
+            <p v-if="errores.turnstile" class="field-error">{{ errores.turnstile }}</p>
+          </div>
+
           <!-- Honeypot: debe llegar vacío; si un bot lo llena, la API descarta el mensaje -->
           <input v-model="lock" type="text" name="lock" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
@@ -241,6 +247,44 @@ const onMotivoChange = () => {
   resetStatus()
 }
 
+// Turnstile: widget explícito para poder reiniciarlo después de cada envío (cada token sirve una sola vez)
+const { turnstileSiteKey, siteTarget } = useRuntimeConfig().public
+const turnstileEl = ref<HTMLElement | null>(null)
+const turnstileToken = ref('')
+let turnstileId: string | undefined
+
+type TurnstileApi = {
+  render: (el: HTMLElement, opts: Record<string, unknown>) => string
+  reset: (id?: string) => void
+}
+
+onMounted(() => {
+  if (!turnstileSiteKey) return
+  const render = () => {
+    const api = (window as unknown as { turnstile?: TurnstileApi }).turnstile
+    if (!api || !turnstileEl.value || turnstileId) return
+    turnstileId = api.render(turnstileEl.value, {
+      sitekey: turnstileSiteKey,
+      action: 'contacto',
+      language: 'es',
+      callback: (token: string) => { turnstileToken.value = token; delete errores.value.turnstile },
+      'expired-callback': () => { turnstileToken.value = '' },
+      'error-callback': () => { turnstileToken.value = '' }
+    })
+  }
+  if ((window as unknown as { turnstile?: TurnstileApi }).turnstile) return render()
+  const script = document.createElement('script')
+  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+  script.async = true
+  script.onload = render
+  document.head.appendChild(script)
+})
+
+const resetTurnstile = () => {
+  turnstileToken.value = ''
+  if (turnstileId) (window as unknown as { turnstile?: TurnstileApi }).turnstile?.reset(turnstileId)
+}
+
 const handleSubmit = async () => {
   touched.value = true
   resetStatus()
@@ -250,13 +294,19 @@ const handleSubmit = async () => {
     document.getElementById(fid(first.id))?.focus()
     return
   }
+  if (turnstileSiteKey && !turnstileToken.value) {
+    errores.value = { ...errores.value, turnstile: 'Completa la verificación de seguridad antes de enviar.' }
+    return
+  }
 
   const { datos } = validarContacto(motivo.value, valores)
   const actual = motivo.value
-  await sendEmail(actual, datos, lock.value)
+  await sendEmail(actual, datos, lock.value, turnstileToken.value)
+  resetTurnstile()
 
   if (isSuccess.value) {
     enviado.value = actual
+    track(`formulario-${actual}`, { sitio: String(siteTarget) })
     for (const key of Object.keys(valores)) valores[key] = ''
     touched.value = false
   }

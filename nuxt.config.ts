@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { perfil } from './app/content/perfil'
 import { personalProjects } from './app/content/projects'
 import tailwindcss from "@tailwindcss/vite";
 
@@ -13,14 +14,20 @@ const SITES = {
   personal: {
     url: 'https://www.joangarfias.me',
     name: 'Joan Garfias',
-    title: 'Joan Garfias | Ingeniero de Software Jr · Backend · Full-Stack · Cloud',
-    description: 'Ingeniero de Software Jr (backend, full-stack y cloud) del Istmo de Tehuantepec, Oaxaca, y cofundador de Nexis Oaxaca. Egreso en junio de 2027.'
+    // Salen de app/content/perfil.ts
+    title: `${perfil.nombre} | ${perfil.titular}`,
+    description: `${perfil.identidad} ${perfil.disponibilidad.egreso}.`,
+    // 1200×630, generadas con scripts/og-images.mjs
+    ogImage: '/og-personal.png',
+    ogImageAlt: `${perfil.nombre}, ${perfil.titular}`
   },
   proyectos: {
     url: process.env.PROYECTOS_URL || 'https://proyectos.joangarfias.me',
     name: 'Joan Garfias — Proyectos',
     title: 'Joan Garfias — Proyectos | Soluciones para tu negocio',
-    description: 'Tu negocio no debería depender de libretas, mensajes perdidos y horas de trabajo manual. Te ayudo a resolverlo, desde Oaxaca y a distancia.'
+    description: 'Tu negocio no debería depender de libretas, mensajes perdidos y horas de trabajo manual. Te ayudo a resolverlo, desde Oaxaca y a distancia.',
+    ogImage: '/og-proyectos.png',
+    ogImageAlt: 'Tu negocio no debería depender de libretas, mensajes perdidos y horas de trabajo manual.'
   }
 } as const
 
@@ -130,6 +137,10 @@ export default defineNuxtConfig({
     // Solo servidor (formulario de contacto): NUXT_RESEND_API_KEY y NUXT_CONTACT_EMAIL
     resendApiKey: '',
     contactEmail: '',
+    // Turnstile (opcional): con secreto, /api/contacto exige un token válido. NUXT_TURNSTILE_SECRET y
+    // NUXT_TURNSTILE_HOSTNAMES (hostnames del frontend separados por coma, sin localhost en producción)
+    turnstileSecret: '',
+    turnstileHostnames: '',
     public: {
       siteUrl: SITE_URL,
       siteTarget: SITE_TARGET,
@@ -137,7 +148,12 @@ export default defineNuxtConfig({
       // URL del sitio personal: el de proyectos enlaza a él ("Conoce a Joan")
       personalUrl: SITES.personal.url,
       // NUXT_PUBLIC_SHOW_PENDING=false oculta los placeholders de contenido pendiente
-      showPending: true
+      showPending: true,
+      // Turnstile (opcional): NUXT_PUBLIC_TURNSTILE_SITE_KEY. Vacío → el formulario no muestra el widget
+      turnstileSiteKey: '',
+      // Analítica de eventos con Umami (opcional): NUXT_PUBLIC_UMAMI_ID. Vacío → no se carga ningún script
+      umamiId: '',
+      umamiHost: 'https://cloud.umami.is'
     }
   },
   app: {
@@ -160,14 +176,15 @@ export default defineNuxtConfig({
         { property: 'og:locale', content: 'es_MX' },
         { property: 'og:title', content: SITE_TITLE },
         { property: 'og:description', content: SITE_DESCRIPTION },
-        // Provisional hasta tener la OG image 1200×630 (ver PENDIENTES.md)
-        { property: 'og:image', content: `${SITE_URL}/joan.jpeg` },
-        { property: 'og:image:alt', content: 'Retrato de Joan Garfias' },
+        { property: 'og:image', content: `${SITE_URL}${SITE.ogImage}` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: SITE.ogImageAlt },
         // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: SITE_TITLE },
         { name: 'twitter:description', content: SITE_DESCRIPTION },
-        { name: 'twitter:image', content: `${SITE_URL}/joan.jpeg` },
+        { name: 'twitter:image', content: `${SITE_URL}${SITE.ogImage}` },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },

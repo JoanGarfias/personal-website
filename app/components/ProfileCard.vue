@@ -43,7 +43,7 @@ const onCaseStudy = computed(() => !!project.value && project.value.slug === rou
             Hola, soy <span class="text-white">Joan</span>
           </p>
           <p class="mt-3 max-w-[30ch] text-[0.9375rem] leading-relaxed text-white/75">
-            Ingeniero de Software Jr desde el Istmo de Tehuantepec, Oaxaca. {{ perfil.disponibilidad.egreso }}.
+            {{ perfil.titular }} desde el Istmo de Tehuantepec, Oaxaca. {{ perfil.disponibilidad.egreso }}.
           </p>
 
           <div class="mt-6 flex flex-wrap items-center gap-3 border-t border-white/15 pt-5">

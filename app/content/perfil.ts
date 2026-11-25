@@ -5,9 +5,9 @@
 export const perfil = {
   nombre: 'Joan Garfias',
   nombreCompleto: 'Joan Pablo Alvarado Garfias',
-  titular: 'Ingeniero de Software Jr · Backend · Full-Stack · Cloud',
+  titular: 'Desarrollador de Software',
   // Bajo el nombre en el hero y en la tarjeta de perfil
-  areas: 'backend · full-stack · cloud',
+  areas: 'backend · cloud',
   identidad:
     'Desarrollador de software junior (backend, full-stack y cloud) del Istmo de Tehuantepec, Oaxaca, y cofundador de Nexis Oaxaca.',
 
@@ -29,7 +29,7 @@ export const perfil = {
   disponibilidad: {
     // Etiqueta corta de la tarjeta de perfil (sustituye a "Disponible para colaborar")
     estado: 'Buscando empleo',
-    puesto: 'Puestos junior de backend, full-stack o cloud',
+    puesto: 'Puestos de ingeniero de software, desarrollador backend o full-stack',
     modalidad: 'Remoto desde Oaxaca',
     egreso: 'Egreso en junio de 2027'
   },
@@ -49,10 +49,10 @@ export const perfil = {
   },
 
   // Enlace para agendar una llamada (Cal.com, Calendly…). null → "Agendar conversación" lleva al formulario.
-  agenda: null as string | null,
+  agenda: 'https://calendar.app.google/FumGgtKYeoss6Kro7',
 
   // Sitio de proyectos para negocios (subdominio, Fase 3). null → la puerta "negocio" lleva al formulario con motivo=proyecto.
-  sitioProyectos: null as string | null
+  sitioProyectos: 'https://proyectos.joangarfias.me'
 }
 
 // Destino de la puerta "¿Tienes un negocio…?" mientras el subdominio no exista

@@ -4,15 +4,15 @@ import { cifra, metricas } from '~/content/metricas'
 import { perfil } from '~/content/perfil'
 import { certifications } from '~/content/stack'
 
-const { siteUrl } = useRuntimeConfig().public
 const description = `${perfil.titular}. ${perfil.disponibilidad.puesto}, ${perfil.disponibilidad.modalidad.toLowerCase()}. ${perfil.disponibilidad.egreso}. Experiencia, proyectos, stack y CV.`
 
 useSeoMeta({
-  title: `Contrátame | ${perfil.nombre} · Ingeniero de Software Jr`,
+  title: `Contrátame | ${perfil.nombre} · ${perfil.titular}`,
   description,
   ogTitle: `Contrátame | ${perfil.nombre}`,
   ogDescription: description,
-  ogUrl: `${siteUrl}/contratame`
+  twitterTitle: `Contrátame | ${perfil.nombre}`,
+  twitterDescription: description
 })
 
 // "Agendar conversación": enlace de agenda si existe; si no, el formulario de esta página
@@ -95,9 +95,9 @@ const education = [
     <header>
       <p class="eyebrow">Contrátame</p>
       <h1 class="display-title mt-6 max-w-[16ch]">
-        Ingeniero de Software Jr<span class="text-accent-word">.</span>
+        {{ perfil.titular }}<span class="text-accent-word">.</span>
       </h1>
-      <p class="mt-6 font-meta text-sm text-ink-muted md:text-base">Backend · Full-Stack · Cloud</p>
+      <p class="mt-6 font-meta text-sm text-ink-muted md:text-base">{{ perfil.areas }}</p>
 
       <dl class="availability mt-10">
         <div v-for="item in availability" :key="item.label" class="availability__item">

@@ -2,9 +2,9 @@
 import { perfil } from '~/content/perfil'
 
 // Título y descripción globales (nuxt.config.ts); aquí solo se fijan para la home
-useSeoMeta({
-  title: `${perfil.nombre} | ${perfil.titular}`
-})
+const title = `${perfil.nombre} | ${perfil.titular}`
+const description = `${perfil.identidad} ${perfil.disponibilidad.egreso}.`
+useSeoMeta({ title, description, ogTitle: title, ogDescription: description, twitterTitle: title, twitterDescription: description })
 
 // Las secciones que antes vivían en la home tienen ahora su página. Los enlaces viejos con ancla
 // (/#contacto, /#proyectos…) no llegan al servidor, así que se redirigen aquí antes del primer pintado.

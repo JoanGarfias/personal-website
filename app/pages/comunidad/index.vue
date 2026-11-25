@@ -11,7 +11,8 @@ useSeoMeta({
   description,
   ogTitle: 'Comunidad | Joan Garfias',
   ogDescription: description,
-  ogUrl: `${siteUrl}/comunidad`
+  twitterTitle: 'Comunidad | Joan Garfias',
+  twitterDescription: description
 })
 
 const { featured, talks, counters, real, timeline } = useCommunity()
