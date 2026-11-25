@@ -21,6 +21,8 @@ Datos centralizados en `app/content/perfil.ts`, `metricas.ts`, `experiencia.ts` 
 | Presupuesto | `shared/contacto.ts` → `RANGOS_PRESUPUESTO` | `[DEFINIR RANGOS]`. Con `null` el campo no aparece en el formulario |
 | Tiempo de respuesta | `shared/contacto.ts` → `TIEMPO_RESPUESTA` | `[DEFINIR]`, ej. "en menos de 48 horas". Con `null` la confirmación dice "Te respondo pronto" |
 | Servicios en el formulario | `shared/contacto.ts` → `SERVICIOS_FORMULARIO` | Se llena en la Fase 3 con el catálogo de servicios |
+| Comunidad: por qué | `community.ts` → `communityWhy` | Frase nueva sobre la brecha de oportunidades en el Istmo: valida la redacción |
+| Comunidad: temas | `community.ts` → `talkTopics` | 5 temas que salen de charlas que ya diste; ajusta títulos o agrega temas nuevos |
 | Post de INROADS | `content/blog/mentoria-inroads.md` → `date` | Tiene fecha 2026-12-21 (futura) y por eso sale como el post más reciente en el Inicio |
 
 ## 1. Fotos, videos y datos

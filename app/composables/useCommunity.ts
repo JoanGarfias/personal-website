@@ -1,4 +1,4 @@
-import { communityEntries, type CommunityEntry } from '~/content/community'
+import { communityEntries, eventsAttended, roleLabels, type CommunityEntry, type TimelineItem } from '~/content/community'
 
 const dateFormat = new Intl.DateTimeFormat('es-MX', { month: 'short', year: 'numeric', timeZone: 'UTC' })
 
@@ -41,7 +41,37 @@ export const useCommunity = () => {
     return items.length ? list.filter(c => c.value > 0) : list.map(c => ({ ...c, value: null }))
   })
 
-  return { entries, given, attended, featured, counters, real }
+  // Línea de tiempo de /comunidad: lo que di u organicé + eventos a los que asistí (sin fecha, al final)
+  const timeline = computed<TimelineItem[]>(() => [
+    ...given.value.map(e => ({
+      id: e.id,
+      type: e.type,
+      title: e.title,
+      subtitle: `${e.event} · ${e.city}`,
+      date: e.date,
+      role: roleLabels[e.role],
+      photo: e.photo,
+      url: e.url
+    })),
+    ...eventsAttended
+      .map((e, i) => ({
+        id: `asistido-${i}`,
+        type: 'asistente' as const,
+        title: e.title,
+        subtitle: e.city ?? '',
+        // Solo el año ("2026") no es una fecha: se muestra el rol
+        date: e.date && /^\d{4}-\d{2}/.test(e.date) ? e.date : null,
+        role: e.role,
+        photo: e.photo ?? null,
+        url: e.url
+      }))
+      .sort((a, b) => (b.date ?? '').localeCompare(a.date ?? ''))
+  ])
+
+  // Charlas y talleres (sin el destacado, que va aparte)
+  const talks = computed(() => given.value.filter(e => (e.type === 'charla' || e.type === 'taller') && e.id !== featured.value?.id))
+
+  return { entries, given, attended, featured, counters, real, timeline, talks }
 }
 
 // JSON-LD Event para cada charla/taller real con fecha, evento y ciudad
