@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { ArrowUpRight, CalendarDays, ExternalLink, FileDown } from 'lucide-vue-next'
-import { experiencia } from '~/content/experiencia'
 import { cifra, metricas } from '~/content/metricas'
 import { perfil } from '~/content/perfil'
 import { certifications } from '~/content/stack'
@@ -14,27 +13,6 @@ useSeoMeta({
   ogTitle: `Contrátame | ${perfil.nombre}`,
   ogDescription: description,
   ogUrl: `${siteUrl}/contratame`
-})
-
-// Datos estructurados: Person con su puesto actual, formación y credenciales
-useHead({
-  script: [{
-    type: 'application/ld+json',
-    innerHTML: JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      name: perfil.nombre,
-      alternateName: perfil.nombreCompleto,
-      jobTitle: perfil.titular,
-      url: siteUrl,
-      address: { '@type': 'PostalAddress', addressLocality: perfil.ubicacion.ciudad, addressRegion: perfil.ubicacion.estado, addressCountry: 'MX' },
-      alumniOf: { '@type': 'CollegeOrUniversity', name: perfil.formacion.escuela },
-      worksFor: experiencia.filter(e => !e.fin).map(e => ({ '@type': 'Organization', name: e.organizacion })),
-      hasCredential: certifications.map(c => ({ '@type': 'EducationalOccupationalCredential', name: c.issuer, url: c.url })),
-      knowsLanguage: ['es', 'en'],
-      sameAs: [perfil.enlaces.github, perfil.enlaces.linkedin, perfil.enlaces.youtube]
-    })
-  }]
 })
 
 // "Agendar conversación": enlace de agenda si existe; si no, el formulario de esta página

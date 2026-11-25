@@ -4,6 +4,8 @@
 // /contacto?motivo=empleo|evento|proyecto|otro preselecciona el motivo (?asunto= sigue funcionando).
 // &servicio=<id> preselecciona el servicio en motivo=proyecto.
 
+import { servicios } from '../app/content/servicios'
+
 export type Motivo = 'empleo' | 'evento' | 'proyecto' | 'otro'
 export const MOTIVOS: Motivo[] = ['empleo', 'evento', 'proyecto', 'otro']
 
@@ -35,8 +37,8 @@ export interface DefinicionMotivo {
   campos: Campo[]
 }
 
-// Servicios del sitio de proyectos (Fase 3). Vacío → el campo "Servicio de interés" no se muestra.
-export const SERVICIOS_FORMULARIO: Opcion[] = []
+// Servicios del sitio de proyectos (app/content/servicios.ts). Vacío → el campo "Servicio de interés" no se muestra.
+export const SERVICIOS_FORMULARIO: Opcion[] = servicios.map(s => ({ value: s.id, label: s.etiqueta }))
 
 // Rangos de presupuesto. null → el campo no se muestra. [DEFINIR RANGOS]
 export const RANGOS_PRESUPUESTO: string[] | null = null

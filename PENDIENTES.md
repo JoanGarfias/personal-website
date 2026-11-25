@@ -15,12 +15,14 @@ Datos centralizados en `app/content/perfil.ts`, `metricas.ts`, `experiencia.ts` 
 | Enlace para agendar | `perfil.ts` → `agenda` | URL de Cal.com/Calendly. Mientras sea `null`, "Agendar conversación" baja al formulario de Contrátame |
 | Modalidad | `perfil.ts` → `disponibilidad.modalidad` | Hoy dice "Remoto desde Oaxaca". ¿Aceptas también híbrido, presencial o reubicarte? |
 | YouTube | `perfil.ts` → `enlaces.youtube` | El sitio tenía dos handles distintos (`@joan_dev` y `@joan-garfias`). Quedó `@joan_dev`: confirma cuál es el bueno |
-| Sitio de proyectos | `perfil.ts` → `sitioProyectos` | URL del subdominio (Fase 3). Mientras sea `null`, la puerta de negocios lleva a `/contacto?motivo=proyecto` |
+| Sitio de proyectos: despliegue | `docs/despliegue.md` | Crear el segundo proyecto de Cloudflare Pages (`SITE_TARGET=proyectos`) y el dominio `proyectos.joangarfias.me` |
+| Sitio de proyectos: enlace | `perfil.ts` → `sitioProyectos` | Cuando el subdominio cargue, pon su URL. Mientras sea `null`, la puerta de negocios lleva a `/contacto?motivo=proyecto` |
+| Subdominio y marca | `nuxt.config.ts` → `SITES.proyectos` | Se usó `proyectos.` y "Joan Garfias — Proyectos" por defecto. Si cambian, edítalos ahí (o `PROYECTOS_URL` en Cloudflare) |
+| Textos del sitio de proyectos | `app/pages-proyectos/index.vue`, `app/content/servicios.ts` | Hero, "Ideal para", pasos, preguntas frecuentes y "Quién está detrás" son redacción nueva: valídalos. Sin precios ni plazos inventados |
 | Tiven como caso freelance | `projects.ts` → `tiven.visibleEn` | ¿Se puede mostrar en el sitio de proyectos? Hoy solo `['personal']` |
 | Euphoria | `projects.ts` (bloque comentado) | Qué se hizo y resultados reales para usarlo como caso |
 | Presupuesto | `shared/contacto.ts` → `RANGOS_PRESUPUESTO` | `[DEFINIR RANGOS]`. Con `null` el campo no aparece en el formulario |
 | Tiempo de respuesta | `shared/contacto.ts` → `TIEMPO_RESPUESTA` | `[DEFINIR]`, ej. "en menos de 48 horas". Con `null` la confirmación dice "Te respondo pronto" |
-| Servicios en el formulario | `shared/contacto.ts` → `SERVICIOS_FORMULARIO` | Se llena en la Fase 3 con el catálogo de servicios |
 | Comunidad: por qué | `community.ts` → `communityWhy` | Frase nueva sobre la brecha de oportunidades en el Istmo: valida la redacción |
 | Comunidad: temas | `community.ts` → `talkTopics` | 5 temas que salen de charlas que ya diste; ajusta títulos o agrega temas nuevos |
 | Post de INROADS | `content/blog/mentoria-inroads.md` → `date` | Tiene fecha 2026-12-21 (futura) y por eso sale como el post más reciente en el Inicio |

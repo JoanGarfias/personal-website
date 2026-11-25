@@ -1,4 +1,4 @@
-// Genera /sitemap.xml en cada build a partir de las páginas que Nitro prerenderiza:
+// Genera /sitemap.xml y /robots.txt en cada build (con el dominio de SITE_TARGET) a partir de las páginas que Nitro prerenderiza:
 // cualquier página nueva (o caso de estudio en projects.ts) entra sola, sin lista manual.
 // Se excluyen redirecciones (p. ej. /habilidades), errores y archivos que no son HTML.
 import { writeFile } from 'node:fs/promises'
@@ -34,6 +34,8 @@ export default defineNuxtModule({
           .join('\n')
         const xml = `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${urls}\n</urlset>\n`
         await writeFile(join(nitro.options.output.publicDir, 'sitemap.xml'), xml)
+        // robots.txt de este sitio, apuntando a su propio sitemap (reemplaza el de public/)
+        await writeFile(join(nitro.options.output.publicDir, 'robots.txt'), `User-agent: *\nAllow: /\nDisallow: /api/\n\nSitemap: ${siteUrl}/sitemap.xml\n`)
         nitro.logger.success(`[sitemap] sitemap.xml generado con ${pages.size} URLs`)
       })
     })

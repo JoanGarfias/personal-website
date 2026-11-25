@@ -2,33 +2,61 @@
 import { personalProjects } from './app/content/projects'
 import tailwindcss from "@tailwindcss/vite";
 
-const SITE_URL = 'https://www.joangarfias.me'
-const SITE_TITLE = 'Joan Garfias | Ingeniero de Software Jr · Backend · Full-Stack · Cloud'
-const SITE_DESCRIPTION = 'Ingeniero de Software Jr (backend, full-stack y cloud) del Istmo de Tehuantepec, Oaxaca, y cofundador de Nexis Oaxaca. Egreso en junio de 2027.'
+// Dos sitios desde el mismo repo (ver docs/despliegue.md):
+//   SITE_TARGET=personal  (por defecto) → www.joangarfias.me        páginas en app/pages
+//   SITE_TARGET=proyectos               → proyectos.joangarfias.me   páginas en app/pages-proyectos
+// Comparten componentes, estilos, contenido y /api/contacto. Cada uno tiene su canonical, sitemap, robots y metadatos.
+const SITE_TARGET = process.env.SITE_TARGET === 'proyectos' ? 'proyectos' : 'personal'
+const isProyectos = SITE_TARGET === 'proyectos'
+
+const SITES = {
+  personal: {
+    url: 'https://www.joangarfias.me',
+    name: 'Joan Garfias',
+    title: 'Joan Garfias | Ingeniero de Software Jr · Backend · Full-Stack · Cloud',
+    description: 'Ingeniero de Software Jr (backend, full-stack y cloud) del Istmo de Tehuantepec, Oaxaca, y cofundador de Nexis Oaxaca. Egreso en junio de 2027.'
+  },
+  proyectos: {
+    url: process.env.PROYECTOS_URL || 'https://proyectos.joangarfias.me',
+    name: 'Joan Garfias — Proyectos',
+    title: 'Joan Garfias — Proyectos | Soluciones para tu negocio',
+    description: 'Tu negocio no debería depender de libretas, mensajes perdidos y horas de trabajo manual. Te ayudo a resolverlo, desde Oaxaca y a distancia.'
+  }
+} as const
+
+const SITE = SITES[SITE_TARGET]
+const SITE_URL = SITE.url
+const SITE_TITLE = SITE.title
+const SITE_DESCRIPTION = SITE.description
 
 // Cada caso de estudio publicado se prerenderiza como HTML estático (los comentados en projects.ts no)
 const projectRoutes = personalProjects.map(p => p.links.caseStudy)
+
+// Editor visual en /_studio (login con GitHub), solo en el sitio personal.
+// Cada publicación es un commit en main y Cloudflare redespliega los dos sitios.
+// Secretos: NUXT_STUDIO_AUTH_GITHUB_CLIENT_ID y NUXT_STUDIO_AUTH_GITHUB_CLIENT_SECRET (ver .env.example)
+const studio = {
+  // Cloudflare Pages no está entre las plataformas que Studio detecta solas
+  repository: {
+    provider: 'github',
+    owner: 'JoanGarfias',
+    repo: 'personal-website',
+    branch: 'main',
+    // El repo es público: el login pide public_repo en vez de acceso a todos los repos privados
+    private: false
+  },
+  i18n: { defaultLocale: 'es' },
+  git: { commit: { messagePrefix: 'content:' } }
+}
 
 export default defineNuxtConfig({
   ssr: true,
   compatibilityDate: '2026-04-03',
   devtools: { enabled: true },
-  modules: ['@nuxt/content', '@nuxt/image', 'nuxt-studio'],
-  // Editor visual en /_studio (login con GitHub). Cada publicación es un commit en main y Cloudflare redespliega.
-  // Secretos: NUXT_STUDIO_AUTH_GITHUB_CLIENT_ID y NUXT_STUDIO_AUTH_GITHUB_CLIENT_SECRET (ver .env.example)
-  studio: {
-    // Cloudflare Pages no está entre las plataformas que Studio detecta solas
-    repository: {
-      provider: 'github',
-      owner: 'JoanGarfias',
-      repo: 'personal-website',
-      branch: 'main',
-      // El repo es público: el login pide public_repo en vez de acceso a todos los repos privados
-      private: false
-    },
-    i18n: { defaultLocale: 'es' },
-    git: { commit: { messagePrefix: 'content:' } }
-  },
+  modules: ['@nuxt/content', '@nuxt/image', ...(isProyectos ? [] : ['nuxt-studio'])],
+  ...(isProyectos ? {} : { studio }),
+  // El sitio de proyectos usa su propia carpeta de páginas (sin navegación del sitio personal)
+  dir: { pages: isProyectos ? 'pages-proyectos' : 'pages' },
   content: {
     // node:sqlite (Node ≥ 22.5) evita compilar better-sqlite3, que pnpm bloquea (allowBuilds)
     experimental: { sqliteConnector: 'native' },
@@ -87,7 +115,7 @@ export default defineNuxtConfig({
   $development: {
     image: { provider: 'ipx' }
   },
-  routeRules: {
+  routeRules: isProyectos ? { '/**': { prerender: true } } : {
     // URLs anteriores a la reestructuración por audiencia (las anclas /#… las redirige pages/index.vue)
     '/proyectos': { redirect: { to: '/contratame#proyectos', statusCode: 301 } },
     '/habilidades': { redirect: { to: '/contratame#stack', statusCode: 301 } },
@@ -104,6 +132,10 @@ export default defineNuxtConfig({
     contactEmail: '',
     public: {
       siteUrl: SITE_URL,
+      siteTarget: SITE_TARGET,
+      siteName: SITE.name,
+      // URL del sitio personal: el de proyectos enlaza a él ("Conoce a Joan")
+      personalUrl: SITES.personal.url,
       // NUXT_PUBLIC_SHOW_PENDING=false oculta los placeholders de contenido pendiente
       showPending: true
     }
@@ -124,7 +156,7 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#f3f4f1' },
         // Open Graph / Facebook
         { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'Joan Garfias' },
+        { property: 'og:site_name', content: SITE.name },
         { property: 'og:locale', content: 'es_MX' },
         { property: 'og:title', content: SITE_TITLE },
         { property: 'og:description', content: SITE_DESCRIPTION },
@@ -156,9 +188,15 @@ export default defineNuxtConfig({
     preset: 'cloudflare-pages',
     prerender: {
       crawlLinks: true,
+      // ?motivo= / ?servicio= son la misma página: no se generan aparte (en la raíz además rompen la caché de Nitro)
+      ignore: [(route: string) => route.includes('?')],
       // Los posts entran por crawlLinks desde /blog (los draft no se enlazan, así que no se generan)
-      routes: ['/', '/contratame', '/comunidad', '/contacto', '/blog', '/blog/rss.xml', '/proyectos', '/habilidades', '/sobre-mi', ...projectRoutes]
-    }
+      routes: isProyectos
+        ? ['/']
+        : ['/', '/contratame', '/comunidad', '/contacto', '/blog', '/blog/rss.xml', '/proyectos', '/habilidades', '/sobre-mi', ...projectRoutes]
+    },
+    // El sitio de proyectos no tiene blog ni Studio: fuera el RSS y el middleware de Studio
+    ignore: isProyectos ? ['**/routes/blog/**', '**/middleware/studio-session-secret.ts'] : []
   },
   experimental: {
     payloadExtraction: true

@@ -3,11 +3,14 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "node scripts/optimize-images.mjs && nuxt build",
+    "build": "node scripts/optimize-images.mjs && nuxt build && node scripts/check-sin-tecnologia.mjs --si-proyectos",
+    "build:proyectos": "SITE_TARGET=proyectos pnpm build",
     "dev": "node scripts/optimize-images.mjs && nuxt dev",
+    "dev:proyectos": "SITE_TARGET=proyectos pnpm dev",
     "generate": "node scripts/optimize-images.mjs && nuxt generate",
     "preview": "nuxt preview",
     "images": "node scripts/optimize-images.mjs",
+    "check:sin-tecnologia": "node scripts/check-sin-tecnologia.mjs",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {

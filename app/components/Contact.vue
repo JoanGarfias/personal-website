@@ -31,7 +31,8 @@
           </li>
         </ul>
 
-        <a :href="perfil.enlaces.cv" :download="perfil.enlaces.cvNombre" class="button-secondary mt-8" data-evento="cv">
+        <!-- El CV no aplica a quien busca un proyecto para su negocio -->
+        <a v-if="props.motivo !== 'proyecto'" :href="perfil.enlaces.cv" :download="perfil.enlaces.cvNombre" class="button-secondary mt-8" data-evento="cv">
           <LucideDownload class="h-4 w-4" aria-hidden="true" />
           Descargar CV (PDF)
         </a>

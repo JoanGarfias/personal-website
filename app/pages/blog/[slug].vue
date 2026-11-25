@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-vue-next'
+import { perfil } from '~/content/perfil'
 
 const route = useRoute()
-const appConfig = useAppConfig()
 const { siteUrl } = useRuntimeConfig().public
 const path = `/blog/${route.params.slug}`
 
@@ -75,8 +75,8 @@ useHead({
       dateModified: new Date(p.updated ?? p.date).toISOString(),
       inLanguage: 'es-MX',
       keywords: p.tags.join(', '),
-      author: { '@type': 'Person', name: appConfig.person.name, url: `${siteUrl}/` },
-      publisher: { '@type': 'Person', name: appConfig.person.name, url: `${siteUrl}/` }
+      author: { '@type': 'Person', name: perfil.nombre, url: `${siteUrl}/` },
+      publisher: { '@type': 'Person', name: perfil.nombre, url: `${siteUrl}/` }
     })
   }]
 })
