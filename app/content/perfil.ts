@@ -45,7 +45,9 @@ export const perfil = {
     youtube: 'https://youtube.com/@joan_dev',
     cv: '/cv.pdf',
     cvNombre: 'CV_Joan_Garfias.pdf',
-    nexis: 'https://nexisoaxaca.tech'
+    nexis: 'https://nexisoaxaca.tech',
+    // WhatsApp con mensaje prellenado; el número no se muestra como texto, solo "Envíame un mensaje"
+    whatsapp: `https://wa.me/529717296179?text=${encodeURIComponent('¡Hola, Joan! Te escribo desde tu sitio web.')}`
   },
 
   // Enlace para agendar una llamada (Cal.com, Calendly…). null → "Agendar conversación" lleva al formulario.

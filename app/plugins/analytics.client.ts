@@ -1,6 +1,6 @@
 // Carga Umami (si hay NUXT_PUBLIC_UMAMI_ID) y registra los clics en elementos con data-evento.
 // Eventos que existen hoy: puerta-empleo / puerta-negocio / puerta-evento (Inicio), cv, agendar,
-// invitame, servicio-<id>, reciente-*, caso-empleo, conoce-a-joan… y formulario-<motivo> al enviar.
+// invitame, correo, whatsapp, servicio-<id>, reciente-*, caso-empleo, conoce-a-joan… y formulario-<motivo> al enviar.
 // Cada evento lleva el sitio (personal | proyectos) y la ruta, para saber qué puerta usa la gente.
 export default defineNuxtPlugin(() => {
   const { umamiId, umamiHost, siteTarget } = useRuntimeConfig().public

@@ -29,6 +29,17 @@
               <span class="text-sm font-medium text-ink-strong transition-transform group-hover:translate-x-1">Envíame un correo</span>
             </button>
           </li>
+          <li class="border-b border-line">
+            <a :href="perfil.enlaces.whatsapp" target="_blank" rel="noopener noreferrer" class="channel group" data-evento="whatsapp">
+              <span class="flex items-center gap-4">
+                <LucideMessageCircle class="h-5 w-5 text-ink-muted transition-colors group-hover:text-accent-ink" aria-hidden="true" />
+                <span class="text-sm text-ink-muted">WhatsApp</span>
+              </span>
+              <span class="text-sm font-medium text-ink-strong transition-transform group-hover:translate-x-1">
+                Envíame un mensaje<span class="sr-only"> (abre WhatsApp)</span>
+              </span>
+            </a>
+          </li>
         </ul>
 
         <!-- El CV no aplica a quien busca un proyecto para su negocio -->
@@ -165,7 +176,7 @@
 </template>
 
 <script setup lang="ts">
-import { Download as LucideDownload, Linkedin as LucideLinkedin, Mail as LucideMail, Send as LucideSend, LucideCheckCircle, LucideAlertCircle, LucideLoader2 } from 'lucide-vue-next'
+import { Download as LucideDownload, Linkedin as LucideLinkedin, Mail as LucideMail, MessageCircle as LucideMessageCircle, Send as LucideSend, LucideCheckCircle, LucideAlertCircle, LucideLoader2 } from 'lucide-vue-next'
 import { camposVisibles, CONFIRMACIONES, DEFINICIONES, esMotivo, MOTIVOS, tiempoRespuesta, validarContacto, type Campo, type Motivo } from '#shared/contacto'
 import { perfil } from '~/content/perfil'
 
