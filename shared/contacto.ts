@@ -1,13 +1,15 @@
 // Formulario de contacto compartido: lo usan el componente (app/components/Contact.vue)
 // y la Pages Function (server/api/contacto.post.ts). Las mismas reglas validan en ambos lados.
 //
-// /contacto?motivo=empleo|evento|proyecto|otro preselecciona el motivo (?asunto= sigue funcionando).
+// /contacto?motivo=otro|empleo|evento|proyecto preselecciona el motivo (?asunto= sigue funcionando).
+// Sin motivo, /contacto abre en "otro" (plática general): las vacantes no deben ser lo primero que se ve.
 // &servicio=<id> preselecciona el servicio en motivo=proyecto.
 
 import { servicios } from '../app/content/servicios'
 
 export type Motivo = 'empleo' | 'evento' | 'proyecto' | 'otro'
-export const MOTIVOS: Motivo[] = ['empleo', 'evento', 'proyecto', 'otro']
+// Orden de los chips del selector: la plática general va primero y empleo segundo
+export const MOTIVOS: Motivo[] = ['otro', 'empleo', 'evento', 'proyecto']
 
 export type TipoCampo = 'text' | 'email' | 'tel' | 'url' | 'date' | 'select' | 'textarea'
 
@@ -138,9 +140,14 @@ export const DEFINICIONES: Record<Motivo, DefinicionMotivo> = {
   },
   otro: {
     value: 'otro',
-    label: 'Otro',
+    label: 'Plática general',
     etiqueta: 'OTRO',
-    campos: [nombre, correo, mensaje('Escribe tu mensaje…', true)]
+    campos: [
+      nombre,
+      correo,
+      { id: 'tema', label: '¿De qué quieres platicar? (opcional)', tipo: 'text', placeholder: 'Ej. Una idea, una duda, un saludo', completo: true, max: 200 },
+      mensaje('Escribe tu mensaje…', true)
+    ]
   }
 }
 
@@ -197,7 +204,7 @@ export const asuntoCorreo = (motivo: Motivo, d: Record<string, string>) => {
     empleo: `${d.empresa} — ${d.puesto}`,
     evento: `${d.organizacion} — ${d.evento}`,
     proyecto: `${d.negocio} — ${etiquetaOpcion('proyecto', 'servicio', d.servicio) ?? d.giro ?? 'Proyecto nuevo'}`,
-    otro: `Mensaje de ${d.nombre}`
+    otro: d.tema ? `${d.tema} — ${d.nombre}` : `Mensaje de ${d.nombre}`
   }[motivo]
   return `[${etiqueta}] ${detalle}`.replace(/[\r\n]+/g, ' ').slice(0, 200)
 }

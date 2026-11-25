@@ -182,8 +182,8 @@ const { isPending, isSuccess, error, sendEmail, resetStatus } = useContact()
 const router = useRouter()
 
 const fijo = computed(() => esMotivo(props.motivo))
-// Sin motivo en la URL se abre en "empleo": es la prioridad del sitio personal
-const motivo = ref<Motivo>(props.motivo ?? 'empleo')
+// Sin motivo en la URL se abre en una plática general; las vacantes tienen su propio camino (Contrátame, ?motivo=empleo)
+const motivo = ref<Motivo>(props.motivo ?? 'otro')
 const valores = reactive<Record<string, string>>({})
 const errores = ref<Record<string, string>>({})
 const touched = ref(false)
@@ -217,7 +217,7 @@ const textos: Record<Motivo, { titulo: [string, string]; intro: string; boton: s
   },
   otro: {
     titulo: ['Vamos a', 'platicar.'],
-    intro: '¿Tienes algo que no encaja en lo anterior? Escríbeme.',
+    intro: '¿Una idea, una duda o solo quieres saludar? Escríbeme de lo que quieras y lo platicamos.',
     boton: 'Enviar mensaje'
   }
 }
