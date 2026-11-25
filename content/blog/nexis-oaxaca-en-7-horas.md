@@ -11,6 +11,7 @@ tags:
   - supabase
   - claude-code
   - agentes
+categoria: tecnico
 ---
 
 En [Nexis Oaxaca](https://nexisoaxaca.tech) organizamos encuentros, charlas y talleres de tecnología. Durante un buen tiempo los gestionamos en Meetup, y funcionaba, pero llegó un punto en el que dejó de tener sentido. Este post cuenta cómo lo reemplacé con una plataforma propia en unas 7 horas de trabajo, apoyándome en agentes de código.
