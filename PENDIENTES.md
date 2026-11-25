@@ -25,6 +25,8 @@ Datos centralizados en `app/content/perfil.ts`, `metricas.ts`, `experiencia.ts` 
 | Tiempo de respuesta | `shared/contacto.ts` → `TIEMPO_RESPUESTA` | `[DEFINIR]`, ej. "en menos de 48 horas". Con `null` la confirmación dice "Te respondo pronto" |
 | Comunidad: por qué | `community.ts` → `communityWhy` | Frase nueva sobre la brecha de oportunidades en el Istmo: valida la redacción |
 | Comunidad: temas | `community.ts` → `talkTopics` | 5 temas que salen de charlas que ya diste; ajusta títulos o agrega temas nuevos |
+| Blog: categoría y etiquetas | `content/blog/*.md` → `categoria`, `tags` | Cada post nuevo necesita `categoria` (`tecnico`, `comunidad` o `reflexiones`; en Studio sale como lista). Sin ella queda en "reflexiones". El post de INROADS no tiene etiquetas |
+| Blog en el menú | `app/utils/blog.ts` → `BLOG_MIN_POSTS_NAV` | Hoy en 1 (se muestra con 3 posts). Súbelo cuando quieras que el menú espere a tener más |
 | Post de INROADS | `content/blog/mentoria-inroads.md` → `date` | Tiene fecha 2026-12-21 (futura) y por eso sale como el post más reciente en el Inicio |
 
 ## 1. Fotos, videos y datos

@@ -3,7 +3,7 @@ import { ArrowUp, Briefcase, FileDown, House, Moon, Newspaper, Send, Sun, Users 
 import { perfil } from '~/content/perfil'
 
 // Una página por audiencia. match: prefijos de ruta que activan el ítem (los casos de estudio viven en Contrátame)
-const items = [
+const allItems = [
   { id: 'inicio', label: 'Inicio', href: '/', icon: House, match: [] as string[] },
   { id: 'contratame', label: 'Contrátame', href: '/contratame', icon: Briefcase, match: ['/contratame', '/proyectos'] },
   { id: 'comunidad', label: 'Comunidad', href: '/comunidad', icon: Users, match: ['/comunidad'] },
@@ -11,12 +11,21 @@ const items = [
   { id: 'contacto', label: 'Contacto', href: '/contacto', icon: Send, match: ['/contacto'] }
 ]
 
+// "Blog" solo con BLOG_MIN_POSTS_NAV publicaciones o más (app/utils/blog.ts). La ruta /blog existe igual.
+// Se cuenta en el build; si la consulta falla, el enlace se muestra.
+const { data: blogCount } = await useAsyncData('nav-blog-count', () =>
+  queryCollection('blog').where('draft', '=', false).count().catch(() => null)
+)
+const items = computed(() =>
+  allItems.filter(i => i.id !== 'blog' || blogCount.value === null || blogCount.value >= BLOG_MIN_POSTS_NAV)
+)
+
 const route = useRoute()
 const { theme, toggle } = useTheme()
 
 const current = computed(() => {
   if (route.path === '/') return 'inicio'
-  return items.find(i => i.match.some(prefix => route.path.startsWith(prefix)))?.id ?? null
+  return items.value.find(i => i.match.some(prefix => route.path.startsWith(prefix)))?.id ?? null
 })
 
 // Progreso de lectura (barra vertical junto al rail)
@@ -45,7 +54,7 @@ const itemEls: (HTMLElement | null)[] = []
 const indicator = ref<{ x: number; y: number; w: number; h: number } | null>(null)
 
 const place = () => {
-  const index = items.findIndex(i => i.id === current.value)
+  const index = items.value.findIndex(i => i.id === current.value)
   const el = index >= 0 ? itemEls[index] : null
   indicator.value = el?.offsetWidth ? { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight } : null
 }

@@ -18,6 +18,9 @@ export default defineContentConfig({
         cover: property(z.string()).editor({ input: 'media' }).optional(),
         // Obligatorio si hay portada (se valida en la página)
         coverAlt: z.string().optional(),
+        // Filtro principal del listado (/blog?categoria=tecnico). Etiquetas legibles en app/utils/blog.ts
+        categoria: z.enum(['tecnico', 'comunidad', 'reflexiones']).default('reflexiones'),
+        // Filtro secundario (/blog?tag=ia). En minúsculas y con guiones, ej. claude-code
         tags: z.array(z.string()).default([]),
         // true → no aparece en /blog, RSS ni sitemap y su URL da 404
         draft: z.boolean().default(false),

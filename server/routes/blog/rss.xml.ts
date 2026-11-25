@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const posts = await queryCollection(event, 'blog')
     .where('draft', '=', false)
     .order('date', 'DESC')
-    .select('path', 'title', 'description', 'date', 'tags')
+    .select('path', 'title', 'description', 'date', 'tags', 'categoria')
     .all()
 
   const items = posts.map((post) => {
@@ -22,6 +22,7 @@ export default defineEventHandler(async (event) => {
       `      <guid isPermaLink="true">${url}</guid>`,
       `      <pubDate>${new Date(post.date).toUTCString()}</pubDate>`,
       `      <description>${escapeXml(post.description)}</description>`,
+      `      <category>${escapeXml(post.categoria)}</category>`,
       ...post.tags.map(tag => `      <category>${escapeXml(tag)}</category>`),
       '    </item>'
     ].join('\n')
@@ -33,7 +34,7 @@ export default defineEventHandler(async (event) => {
   <channel>
     <title>Blog de Joan Garfias</title>
     <link>${siteUrl}/blog</link>
-    <description>Notas sobre backend, cloud y lo que aprendo construyendo software desde Oaxaca.</description>
+    <description>Notas sobre backend, cloud, comunidad y lo que aprendo construyendo software desde Oaxaca.</description>
     <language>es-MX</language>
     <atom:link href="${siteUrl}/blog/rss.xml" rel="self" type="application/rss+xml" />
 ${posts[0] ? `    <lastBuildDate>${new Date(posts[0].date).toUTCString()}</lastBuildDate>\n` : ''}${items.join('\n')}
