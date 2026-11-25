@@ -2,6 +2,9 @@
 // placeholder: true → entrada de ejemplo para validar el diseño; se oculta con NUXT_PUBLIC_SHOW_PENDING=false.
 // Reemplázalas por entradas reales (y borra placeholder). Solo las entradas reales generan JSON-LD Event.
 
+import { cifra, metricas } from './metricas'
+import { perfil } from './perfil'
+
 export type CommunityType = 'charla' | 'taller' | 'organizacion' | 'asistente'
 export type CommunityRole = 'ponente' | 'tallerista' | 'moderador' | 'organizador' | 'asistente'
 
@@ -145,9 +148,10 @@ export const nexis = {
   role: 'Cofundador',
   description: 'Comunidad de tecnología en el Istmo de Tehuantepec.',
   participation: 'Llevo la visión del proyecto y establezco esquemas de colaboración con instituciones, empresas y otras comunidades tech.' as string | null, // en qué has participado dentro de Nexis (1–2 frases)
-  members: '65+' as string | null, // ej. "120+"
-  events: '30+' as string | null, // ej. "8"
-  url: 'https://nexisoaxaca.tech' as string | null,
+  // Cifras en app/content/metricas.ts
+  members: cifra(metricas.nexisMiembros) as string | null,
+  events: cifra(metricas.nexisEventos) as string | null,
+  url: perfil.enlaces.nexis as string | null,
   photo: 'nexis/foto_grupal.jpg' as string | null
 }
 
@@ -177,7 +181,7 @@ export const googleAmbassador = {
 }
 
 export const youtube = {
-  channel: 'https://youtube.com/@joan_dev',
+  channel: perfil.enlaces.youtube,
   handle: '@joan_dev',
   videoId: null as string | null, // ID del video destacado, ej. "dQw4w9WgXcQ"
   videoTitle: null as string | null

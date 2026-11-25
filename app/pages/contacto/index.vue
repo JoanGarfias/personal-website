@@ -2,7 +2,7 @@
 useHead({
   title: 'Contacto | Joan Garfias',
   meta: [
-    { name: 'description', content: 'Escríbeme sobre un proyecto, una oportunidad de empleo o una invitación a tu evento.' }
+    { name: 'description', content: 'Escríbeme sobre una vacante, una invitación a tu evento o un proyecto para tu negocio.' }
   ]
 })
 </script>

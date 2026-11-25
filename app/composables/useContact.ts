@@ -1,31 +1,15 @@
 // Envío del formulario a la ruta del propio sitio (server/api/contacto.post.ts, Pages Function en Cloudflare).
-// Recibe { name, email, subject, message, lock }.
+// Recibe { motivo, campos, lock }. Los campos de cada motivo están en shared/contacto.ts.
+import type { Motivo } from '#shared/contacto'
+
 export const CONTACT_ENDPOINT = '/api/contacto'
-export const CONTACT_EMAIL = 'joanpagarfpf@gmail.com'
-
-export const contactSubjects = [
-  { value: 'proyecto', label: 'Proyecto' },
-  { value: 'empleo', label: 'Empleo' },
-  { value: 'evento', label: 'Invitación a evento' },
-  { value: 'otro', label: 'Otro' }
-] as const
-
-export type ContactSubject = typeof contactSubjects[number]['value']
-
-export interface ContactForm {
-  name: string
-  email: string
-  subject: ContactSubject
-  message: string
-  lock: string
-}
 
 export const useContact = () => {
   const isPending = ref(false)
   const isSuccess = ref(false)
   const error = ref<string | null>(null)
 
-  const sendEmail = async (form: ContactForm) => {
+  const sendEmail = async (motivo: Motivo, campos: Record<string, string>, lock: string) => {
     isPending.value = true
     isSuccess.value = false
     error.value = null
@@ -37,7 +21,7 @@ export const useContact = () => {
           'Content-Type': 'application/json',
           'Accept': 'application/json'
         },
-        body: JSON.stringify(form)
+        body: JSON.stringify({ motivo, campos, lock })
       })
 
       if (!response.ok) throw new Error(`HTTP ${response.status}`)

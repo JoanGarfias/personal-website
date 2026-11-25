@@ -3,6 +3,9 @@ import { ArrowRight, ExternalLink } from 'lucide-vue-next'
 import { communityIntro, eventsAttended, googleAmbassador, nexis } from '~/content/community'
 import { communityEventsJsonLd } from '~/composables/useCommunity'
 
+// En /comunidad este título es el H1
+const props = withDefaults(defineProps<{ titleTag?: string }>(), { titleTag: 'h2' })
+
 const { showPending } = usePending()
 const { given, featured, counters, real } = useCommunity()
 
@@ -17,10 +20,10 @@ if (events.length) {
 <template>
   <section id="comunidad" class="section-space">
     <header class="mb-12">
-      <SectionLabel index="04" label="Comunidad" />
-      <h2 class="section-title mt-6">
+      <SectionLabel index="01" label="Comunidad" />
+      <component :is="props.titleTag" class="section-title mt-6">
         Aprender. Construir. <span class="text-accent-word">Compartir.</span>
-      </h2>
+      </component>
       <p v-if="communityIntro || showPending" class="section-copy mt-4">
         <ContentText :value="communityIntro" label="por qué me importa la comunidad tech en Oaxaca (1–2 frases)" />
       </p>
@@ -105,7 +108,7 @@ if (events.length) {
     <!-- 6. CTA secundario -->
     <div class="mt-16 flex flex-wrap items-center gap-4 border-t border-line pt-10">
       <p class="text-lg text-ink-body">¿Organizas un meetup, una clase o un hackathon?</p>
-      <NuxtLink to="/contacto?asunto=evento" class="button-dark group">
+      <NuxtLink to="/contacto?motivo=evento" class="button-dark group" data-evento="invitame">
         Invítame a tu evento
         <ArrowRight class="arrow-swap h-4 w-4" aria-hidden="true" />
       </NuxtLink>

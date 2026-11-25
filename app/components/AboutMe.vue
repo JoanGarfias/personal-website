@@ -4,7 +4,7 @@ import { aboutCards, aboutCredentials, aboutParagraphs, aboutPhoto, aboutQuote, 
 
 // En su página propia este título es el H1; en la home es H2
 const props = defineProps({ titleTag: { type: String, default: 'h2' } })
-const cardTag = computed(() => `h${Number(props.titleTag.slice(1)) + 1}`)
+const cardTag = computed(() => `h${Number(props.titleTag.slice(1)) + 2}`)
 const appConfig = useAppConfig()
 const { showPending } = usePending()
 const hasDraftParagraphs = aboutParagraphs.some(p => p.draft)
@@ -12,7 +12,7 @@ const hasDraftParagraphs = aboutParagraphs.some(p => p.draft)
 
 <template>
   <section id="sobre-mi" class="section-space">
-    <SectionLabel index="03" label="Sobre mí" />
+    <SectionLabel index="02" label="Sobre mí" />
 
     <component :is="props.titleTag" class="section-title mt-6 max-w-[22ch]">
       {{ aboutTitle.lead }} <span class="text-soft">{{ aboutTitle.soft }}</span>
@@ -38,7 +38,7 @@ const hasDraftParagraphs = aboutParagraphs.some(p => p.draft)
           </li>
         </ul>
 
-        <NuxtLink to="/#contacto" class="button-dark group mt-8">
+        <NuxtLink to="/contacto" class="button-dark group mt-8">
           Escríbeme <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" />
         </NuxtLink>
       </div>
@@ -65,6 +65,7 @@ const hasDraftParagraphs = aboutParagraphs.some(p => p.draft)
 
     <WaveDivider v-if="appConfig.signature" class="my-14" />
 
+    <component :is="props.titleTag === 'h1' ? 'h2' : 'h3'" class="mb-4 font-display text-2xl font-medium tracking-tight">Cómo trabajo</component>
     <ul class="border-t border-line">
       <ScrollReveal v-for="(card, i) in aboutCards" :key="card.title" as="li" :delay="i * 90" class="about-row">
         <span class="font-meta text-sm text-ink-muted">0{{ i + 1 }}</span>

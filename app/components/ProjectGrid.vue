@@ -1,14 +1,18 @@
 <script setup>
 import { featuredProjects, otherProjects } from '~/content/projects'
 
-// En /proyectos este título es el H1 de la página; en la home es H2
-const props = defineProps({ titleTag: { type: String, default: 'h2' } })
+// index / stackIndex: numeración de las etiquetas de sección en la página que lo contiene (Contrátame)
+const props = defineProps({
+  titleTag: { type: String, default: 'h2' },
+  index: { type: String, default: '01' },
+  stackIndex: { type: String, default: '02' }
+})
 const level = computed(() => Number(props.titleTag.slice(1)) + 1)
 const isPage = computed(() => props.titleTag === 'h1')
 
 // Tecnología elegida en la banda de stack: resalta los proyectos que la usan
 const activeTech = ref(null)
-const usesTech = project => project.stack.includes(activeTech.value)
+const usesTech = project => project.tecnico.stack.includes(activeTech.value)
 const dimmed = project => !!activeTech.value && !usesTech(project)
 const highlighted = project => !!activeTech.value && usesTech(project)
 
@@ -39,7 +43,7 @@ onBeforeUnmount(() => {
 <template>
   <section id="proyectos" class="section-space">
     <header class="mb-12">
-      <SectionLabel index="01" label="Proyectos destacados" />
+      <SectionLabel :index="props.index" label="Proyectos destacados" />
       <component :is="props.titleTag" class="section-title mt-6 max-w-[22ch]">
         Casos de estudio: <span class="text-soft">qué dolía, qué decidí y qué cambió.</span>
       </component>
@@ -73,6 +77,6 @@ onBeforeUnmount(() => {
       </p>
     </div>
 
-    <StackBand v-model="activeTech" :level="level" />
+    <StackBand v-model="activeTech" :level="level" :index="props.stackIndex" />
   </section>
 </template>

@@ -1,13 +1,13 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { projects } from './app/content/projects'
+import { personalProjects } from './app/content/projects'
 import tailwindcss from "@tailwindcss/vite";
 
 const SITE_URL = 'https://www.joangarfias.me'
-const SITE_TITLE = 'Joan Garfias | Desarrollador de Software · Backend & Cloud'
-const SITE_DESCRIPTION = 'Construyo software con propósito desde Oaxaca, México. Desarrollador de software enfocado en backend, cloud e infraestructura.'
+const SITE_TITLE = 'Joan Garfias | Ingeniero de Software Jr · Backend · Full-Stack · Cloud'
+const SITE_DESCRIPTION = 'Ingeniero de Software Jr (backend, full-stack y cloud) del Istmo de Tehuantepec, Oaxaca, y cofundador de Nexis Oaxaca. Egreso en junio de 2027.'
 
 // Cada caso de estudio publicado se prerenderiza como HTML estático (los comentados en projects.ts no)
-const projectRoutes = projects.map(p => p.links.caseStudy)
+const projectRoutes = personalProjects.map(p => p.links.caseStudy)
 
 export default defineNuxtConfig({
   ssr: true,
@@ -88,8 +88,10 @@ export default defineNuxtConfig({
     image: { provider: 'ipx' }
   },
   routeRules: {
-    // El stack ahora vive dentro de Proyectos
-    '/habilidades': { redirect: { to: '/#stack', statusCode: 301 } },
+    // URLs anteriores a la reestructuración por audiencia (las anclas /#… las redirige pages/index.vue)
+    '/proyectos': { redirect: { to: '/contratame#proyectos', statusCode: 301 } },
+    '/habilidades': { redirect: { to: '/contratame#stack', statusCode: 301 } },
+    '/sobre-mi': { redirect: { to: '/#sobre-mi', statusCode: 301 } },
     // Studio: login y API corren en el worker, nunca como HTML estático
     '/_studio': { prerender: false },
     '/__nuxt_studio/**': { prerender: false },
@@ -155,7 +157,7 @@ export default defineNuxtConfig({
     prerender: {
       crawlLinks: true,
       // Los posts entran por crawlLinks desde /blog (los draft no se enlazan, así que no se generan)
-      routes: ['/', '/proyectos', '/habilidades', '/sobre-mi', '/contacto', '/blog', '/blog/rss.xml', ...projectRoutes]
+      routes: ['/', '/contratame', '/comunidad', '/contacto', '/blog', '/blog/rss.xml', '/proyectos', '/habilidades', '/sobre-mi', ...projectRoutes]
     }
   },
   experimental: {

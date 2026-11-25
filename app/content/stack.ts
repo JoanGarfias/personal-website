@@ -45,7 +45,7 @@ export const stackGroups: { title: string; items: StackItem[] }[] = [
 export const certifications = [
   {
     issuer: 'AWS Certified Cloud Practitioner',
-    code: 'AWS CLF-C002',
+    code: 'AWS CLF-C02',
     description: 'Certificación de fundamentos de AWS que valida conocimiento básico de nube, seguridad, arquitectura, precios y servicios principales.',
     url: 'https://www.credly.com/badges/05c0a6b5-8ec7-4329-8394-6e5a25947141/public_url'
   }

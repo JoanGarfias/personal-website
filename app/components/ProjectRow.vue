@@ -21,7 +21,7 @@ const props = defineProps<{
       <span class="mt-1 block text-[0.9375rem] leading-relaxed text-ink-muted">{{ project.summary }}</span>
     </span>
     <span class="hidden flex-wrap gap-1.5 md:flex" aria-label="Tecnologías">
-      <span v-for="tech in project.stack.slice(0, 3)" :key="tech" class="chip">{{ tech }}</span>
+      <span v-for="tech in project.tecnico.stack.slice(0, 3)" :key="tech" class="chip">{{ tech }}</span>
     </span>
     <span class="text-sm text-ink-muted md:text-right">{{ project.year }}</span>
     <span class="project-row__arrow" aria-hidden="true"><ArrowUpRight class="arrow-swap h-4 w-4" /></span>

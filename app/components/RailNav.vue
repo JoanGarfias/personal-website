@@ -1,34 +1,22 @@
 <script setup lang="ts">
-import { ArrowUp, FileDown, FolderKanban, House, Layers, Moon, Newspaper, Send, Sun, User, Users } from 'lucide-vue-next'
+import { ArrowUp, Briefcase, FileDown, House, Moon, Newspaper, Send, Sun, Users } from 'lucide-vue-next'
+import { perfil } from '~/content/perfil'
 
-// Mismo orden que las secciones de la home (Blog es una página aparte). mobile: false → solo en el rail de escritorio
+// Una página por audiencia. match: prefijos de ruta que activan el ítem (los casos de estudio viven en Contrátame)
 const items = [
-  { id: 'inicio', label: 'Inicio', href: '/', icon: House },
-  { id: 'proyectos', label: 'Proyectos', href: '/#proyectos', icon: FolderKanban },
-  { id: 'stack', label: 'Stack', href: '/#stack', icon: Layers, mobile: false },
-  { id: 'sobre-mi', label: 'Sobre mí', href: '/#sobre-mi', icon: User },
-  { id: 'comunidad', label: 'Comunidad', href: '/#comunidad', icon: Users },
-  { id: 'blog', label: 'Blog', href: '/blog', icon: Newspaper },
-  { id: 'contacto', label: 'Contacto', href: '/#contacto', icon: Send }
-]
-
-// Rutas internas → ítem del menú
-const routeToId: [string, string][] = [
-  ['/proyectos', 'proyectos'],
-  ['/sobre-mi', 'sobre-mi'],
-  ['/blog', 'blog'],
-  ['/contacto', 'contacto']
+  { id: 'inicio', label: 'Inicio', href: '/', icon: House, match: [] as string[] },
+  { id: 'contratame', label: 'Contrátame', href: '/contratame', icon: Briefcase, match: ['/contratame', '/proyectos'] },
+  { id: 'comunidad', label: 'Comunidad', href: '/comunidad', icon: Users, match: ['/comunidad'] },
+  { id: 'blog', label: 'Blog', href: '/blog', icon: Newspaper, match: ['/blog'] },
+  { id: 'contacto', label: 'Contacto', href: '/contacto', icon: Send, match: ['/contacto'] }
 ]
 
 const route = useRoute()
 const { theme, toggle } = useTheme()
-const { activeId, refresh } = useScrollSpy(items.map(i => i.id))
-// El rail persiste entre rutas: al volver a la home hay que medir las secciones nuevas
-useNuxtApp().hook('page:finish', refresh)
 
 const current = computed(() => {
-  if (route.path === '/') return activeId.value ?? 'inicio'
-  return routeToId.find(([prefix]) => route.path.startsWith(prefix))?.[1] ?? null
+  if (route.path === '/') return 'inicio'
+  return items.find(i => i.match.some(prefix => route.path.startsWith(prefix)))?.id ?? null
 })
 
 // Progreso de lectura (barra vertical junto al rail)
@@ -57,9 +45,7 @@ const itemEls: (HTMLElement | null)[] = []
 const indicator = ref<{ x: number; y: number; w: number; h: number } | null>(null)
 
 const place = () => {
-  let index = items.findIndex(i => i.id === current.value)
-  // Ítems ocultos en móvil (Stack) → el anterior visible
-  while (index > 0 && !itemEls[index]?.offsetWidth) index--
+  const index = items.findIndex(i => i.id === current.value)
   const el = index >= 0 ? itemEls[index] : null
   indicator.value = el?.offsetWidth ? { x: el.offsetLeft, y: el.offsetTop, w: el.offsetWidth, h: el.offsetHeight } : null
 }
@@ -109,13 +95,12 @@ onBeforeUnmount(() => {
           v-for="(item, i) in items"
           :key="item.id"
           :ref="el => (itemEls[i] = el as HTMLElement | null)"
-          :class="{ rail__desktop: item.mobile === false }"
         >
           <NuxtLink
             :to="item.href"
             class="rail__btn"
             :class="{ 'is-active': current === item.id }"
-            :aria-current="current === item.id ? 'location' : undefined"
+            :aria-current="current === item.id ? 'page' : undefined"
             :aria-label="item.label"
           >
             <component :is="item.icon" class="rail__icon" aria-hidden="true" />
@@ -125,7 +110,7 @@ onBeforeUnmount(() => {
         </li>
       </ul>
 
-      <a href="/cv.pdf" download="CV_Joan_Garfias.pdf" class="rail__btn rail__desktop" aria-label="Descargar CV (PDF)">
+      <a :href="perfil.enlaces.cv" :download="perfil.enlaces.cvNombre" class="rail__btn rail__desktop" aria-label="Descargar CV (PDF)" data-evento="cv">
         <FileDown class="rail__icon" aria-hidden="true" />
         <span class="rail__tip" aria-hidden="true" data-text="Descargar CV"></span>
       </a>

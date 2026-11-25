@@ -39,7 +39,7 @@ const meta = computed(() => caseStudy.value?.meta)
 const projectInfo = computed(() => ({
   Periodo: meta.value?.period,
   Equipo: meta.value?.teamSize && meta.value.teamSize > 1 ? `${meta.value.team} · ${meta.value.teamSize} personas` : meta.value?.team,
-  Rol: project.role,
+  Rol: project.tecnico.role,
   Ubicación: meta.value?.location
 }))
 </script>
@@ -47,7 +47,7 @@ const projectInfo = computed(() => ({
 <template>
   <div class="pb-16 pt-6 lg:pt-10">
     <div>
-      <NuxtLink to="/#proyectos" class="button-secondary group mb-10">
+      <NuxtLink to="/contratame#proyectos" class="button-secondary group mb-10">
         <ArrowLeft class="h-4 w-4 transition-transform group-hover:-translate-x-1" aria-hidden="true" />
         Proyectos
       </NuxtLink>
@@ -62,8 +62,8 @@ const projectInfo = computed(() => ({
             </div>
             <h1 class="display-title">{{ project.name }}<span class="text-accent-word">.</span></h1>
             <p class="max-w-3xl text-xl leading-8 text-ink-body">{{ project.summary }}</p>
-            <div v-if="project.metric" class="flex flex-wrap items-center gap-3">
-              <span class="metric">{{ project.metric }}</span>
+            <div v-if="project.tecnico.metric" class="flex flex-wrap items-center gap-3">
+              <span class="metric">{{ project.tecnico.metric }}</span>
               <DraftTag v-if="project.draft" />
             </div>
           </header>
@@ -100,12 +100,12 @@ const projectInfo = computed(() => ({
             </ScrollReveal>
 
             <!-- Solo si el proyecto tiene diagrama -->
-            <section v-if="project.arch" aria-labelledby="arquitectura">
+            <section v-if="project.tecnico.arch" aria-labelledby="arquitectura">
               <h2 id="arquitectura" class="case-h2">Arquitectura</h2>
               <div class="shot">
                 <div class="shot__frame">
                   <img
-                    :src="project.arch"
+                    :src="project.tecnico.arch"
                     :alt="`Diagrama de arquitectura de ${project.name}`"
                     loading="lazy"
                     class="h-auto w-full"
@@ -181,7 +181,7 @@ const projectInfo = computed(() => ({
               <div class="mt-7 border-t border-line pt-7">
                 <h2 class="mb-4 text-sm text-ink-muted">Stack</h2>
                 <ul class="flex flex-wrap gap-2">
-                  <li v-for="tech in project.stack" :key="tech" class="chip">{{ tech }}</li>
+                  <li v-for="tech in project.tecnico.stack" :key="tech" class="chip">{{ tech }}</li>
                 </ul>
               </div>
 
@@ -197,9 +197,9 @@ const projectInfo = computed(() => ({
             </div>
 
             <div class="relative overflow-hidden rounded-feature bg-surface-inverse p-7 text-white">
-              <h2 class="font-display text-2xl font-medium text-white">¿Tienes un problema parecido?</h2>
-              <p class="my-4 text-sm leading-6 text-white/70">Conversemos sobre el problema, el alcance y la mejor forma de construirlo.</p>
-              <NuxtLink to="/contacto" class="button-primary group w-full">Hablemos <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" /></NuxtLink>
+              <h2 class="font-display text-2xl font-medium text-white">¿Buscas a alguien así para tu equipo?</h2>
+              <p class="my-4 text-sm leading-6 text-white/70">Busco un puesto junior de backend, full-stack o cloud. Hablemos de tu vacante.</p>
+              <NuxtLink to="/contacto?motivo=empleo" class="button-primary group w-full" data-evento="caso-empleo">Hablemos <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" /></NuxtLink>
             </div>
           </div>
         </aside>
