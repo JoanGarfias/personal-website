@@ -47,8 +47,6 @@ Con eso escribí un PRD corto, con las funciones que sí o sí tenía que tener 
 
 También dejé reglas que no se negociaban: seguir la guía de marca de Nexis (tipografía, paleta y logo), no inventar métricas en el copy y que todo corriera en planes gratuitos.
 
-<!-- IMAGEN: Captura del PRD o del plan inicial → /images/blog/nexis-oaxaca-en-7-horas/prd.png -->
-
 ## Varios agentes trabajando al mismo tiempo
 
 Construí la plataforma con [Claude Code](https://claude.com/claude-code). La clave para que cupiera en un día fue no trabajar en una sola conversación de forma lineal, sino repartir el trabajo entre varios agentes en paralelo.
@@ -61,8 +59,6 @@ Lo hice en dos fases:
 En la fase 2, mientras un agente trabajaba el esquema de la base y las políticas de seguridad, otro construía el panel de administración y otro el flujo de registro y los gafetes. Mi trabajo era más de director técnico que de programador: definir qué hacía cada uno, revisar lo que entregaba, probarlo e integrarlo.
 
 Para que los agentes no se pisaran, el repositorio tenía un `CLAUDE.md` con la estructura del proyecto, los comandos y las reglas de marca, y un `LANZAMIENTO.md` con la lista única de pendientes. Así cada agente empezaba con el mismo contexto, sin que yo tuviera que repetirlo.
-
-<!-- IMAGEN: Varias sesiones de Claude Code trabajando en paralelo → /images/blog/nexis-oaxaca-en-7-horas/agentes.png -->
 
 ## El stack y por qué
 

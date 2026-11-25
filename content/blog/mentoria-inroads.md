@@ -9,8 +9,6 @@ seo:
 date: '2026-12-21'
 ---
 
-# 
-
 > "¿Tú eres de los que lavan su taza o de los que la dejan para que alguien de limpieza se encargue?"
 
 Mi mentor me hizo esa pregunta en una de nuestras sesiones y todavía no me la saco de la cabeza.

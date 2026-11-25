@@ -30,6 +30,8 @@ Ordenado por prioridad: hero y comunidad primero.
 | Caso de estudio | `projects.ts` → `video` (×6, opcional) | video | Video demo | MP4/WebM o ID de YouTube, 30–90 s, 1920×1080 |
 | Proyectos | `projects.ts` → `cover` (opcional) | foto | Portadas dedicadas (hoy se usa la primera captura) | 16/10, mín. 1600×1000 px, PNG/JPG |
 | Sobre mí | `app/content/about.ts` → `aboutPhoto` | foto | Foto casual fuera de la oficina (beatbox, cancha, Oaxaca) | 4/5 vertical, mín. 1200×1500 px, JPG/WebP |
+| Blog · Nexis | `content/blog/nexis-oaxaca-en-7-horas.md` (antes de "## Varios agentes…") | foto | Captura del PRD o del plan inicial | `/images/blog/nexis-oaxaca-en-7-horas/prd.png` |
+| Blog · Nexis | `content/blog/nexis-oaxaca-en-7-horas.md` (antes de "## El stack y por qué") | foto | Varias sesiones de Claude Code trabajando en paralelo | `/images/blog/nexis-oaxaca-en-7-horas/agentes.png` |
 
 ## 2. Textos por validar (`[BORRADOR – VALIDAR]`)
 
