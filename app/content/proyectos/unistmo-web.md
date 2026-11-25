@@ -1,6 +1,6 @@
 ---
 id: unistmo-web
-period: Enero de 2026 - Actualidad
+period: Febrero de 2026 - Junio de 2026
 team: Colaborativo
 teamSize: 7
 collaborators: ["Joan Garfias", "Karla G.", "Jeremy O.", "Juan E.", "Sadie B.", "Joshua H.", "Orlando C."]

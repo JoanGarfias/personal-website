@@ -4,7 +4,7 @@ import { projectsUsing } from '~/content/projects'
 import { certifications, stackGroups } from '~/content/stack'
 
 // level: nivel del titular "Stack" (3 en la home, 2 en /proyectos donde Proyectos es H1)
-const props = withDefaults(defineProps<{ level?: number }>(), { level: 3 })
+const props = withDefaults(defineProps<{ level?: number; index?: string }>(), { level: 3, index: '02' })
 
 // v-model: tecnología seleccionada (resalta los proyectos que la usan)
 const activeTech = defineModel<string | null>({ default: null })
@@ -21,7 +21,7 @@ const toggle = (name: string) => {
 
 <template>
   <div id="stack" class="stack-band">
-    <SectionLabel index="02" label="Stack" />
+    <SectionLabel :index="props.index" label="Stack" />
     <component :is="`h${props.level}`" class="section-title mt-6 max-w-[24ch]">
       Las herramientas detrás de <span class="text-soft">cada proyecto.</span>
     </component>

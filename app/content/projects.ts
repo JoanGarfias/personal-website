@@ -1,6 +1,8 @@
 // Datos estructurados de los proyectos. El cuerpo del caso de estudio vive en content/proyectos/{slug}.md.
+// Cada proyecto tiene dos vistas: `tecnico` (sitio personal) y `negocio` (sitio de proyectos, sin tecnologías).
+// visibleEn decide en qué sitio aparece. Tiven queda solo en el personal hasta confirmar si puede ser caso freelance.
 // draft: true → marca problem/decision/result/metric como "[BORRADOR – VALIDAR]" (hoy todos están validados).
-// arch / video: solo se muestran en el caso de estudio si existen.
+// tecnico.arch / video: solo se muestran en el caso de estudio si existen.
 
 export interface ProjectImage {
   src: string
@@ -9,21 +11,40 @@ export interface ProjectImage {
   alt: string
 }
 
+// Dónde se muestra cada proyecto: personal (joangarfias.me) y/o proyectos (sitio para negocios)
+export type Sitio = 'personal' | 'proyectos'
+
+// Vista técnica (sitio personal): problema, decisión, resultado, rol y stack
+export interface VistaTecnica {
+  role: string
+  problem: string | null
+  decision: string | null
+  result: string | null
+  metric?: string | null
+  arch?: string | null
+  stack: string[]
+}
+
+// Vista de negocio (sitio de proyectos): SIN tecnologías ni jerga técnica (lo revisa check:sin-tecnologia)
+export interface VistaNegocio {
+  cliente: string
+  situacion: string
+  dolor: string
+  cambio: string
+  resultado: string
+}
+
 export interface Project {
   slug: string
   number: string
   name: string
   summary: string
   year: string
-  role: string
   featured: boolean
   draft: boolean
-  problem: string | null
-  decision: string | null
-  result: string | null
-  arch?: string | null
-  metric?: string | null
-  stack: string[]
+  visibleEn: Sitio[]
+  tecnico: VistaTecnica
+  negocio: VistaNegocio | null
   cover: ProjectImage | null
   images: ProjectImage[]
   video?: string | null
@@ -37,14 +58,18 @@ export const projects: Project[] = [
     name: 'Tiven',
     summary: 'Plataforma SaaS para salones de belleza: reservas en línea, inventario, programa de puntos y marketing en un solo sistema.',
     year: '2025 – hoy',
-    role: 'Backend Developer',
+    tecnico: {
+      role: 'Backend Developer',
+      problem: 'Los salones llevaban citas, inventario y clientes frecuentes en papel o en varios Excel: se perdían citas, no había control del stock ni seguimiento al cliente después de su visita.',
+      decision: 'Desarrollé la API en Laravel sobre PostgreSQL, una base de datos que protege la integridad de ventas, inventario y puntos. Participé en el modelado de datos, los módulos de negocio y el despliegue.',
+      result: 'Una plataforma estable en producción que redujo 30% el tiempo administrativo de los salones que la usan.',
+      metric: '−30% tiempo administrativo',
+      stack: ['Laravel', 'PHP', 'PostgreSQL', 'Docker', 'AWS', 'Vue.js', 'Astro']
+    },
     featured: true,
     draft: false,
-    problem: 'Los salones llevaban citas, inventario y clientes frecuentes en papel o en varios Excel: se perdían citas, no había control del stock ni seguimiento al cliente después de su visita.',
-    decision: 'Desarrollé la API en Laravel sobre PostgreSQL, una base de datos que protege la integridad de ventas, inventario y puntos. Participé en el modelado de datos, los módulos de negocio y el despliegue.',
-    result: 'Una plataforma estable en producción que redujo 30% el tiempo administrativo de los salones que la usan.',
-    metric: '−30% tiempo administrativo',
-    stack: ['Laravel', 'PHP', 'PostgreSQL', 'Docker', 'AWS', 'Vue.js', 'Astro'],
+    visibleEn: ['personal'],
+    negocio: null,
     cover: null,
     images: [
       { src: '/projects/tiven/1.png', width: 1270, height: 936, alt: 'Portada de Tiven: “No pierdas citas por no poder contestar”, con el flujo de reserva en un celular' },
@@ -59,15 +84,19 @@ export const projects: Project[] = [
     name: 'Civitas',
     summary: 'Sistema web para condominios que conecta a residentes, administración y seguridad: accesos con código QR, reportes de incidentes, cobranza y áreas comunes.',
     year: '2026',
-    role: 'Fullstack Developer',
+    tecnico: {
+      role: 'Fullstack Developer',
+      problem: 'La seguridad reaccionaba después de los incidentes, y los reportes, la comunicación y las finanzas eran lentos y poco transparentes para los residentes.',
+      decision: 'Proyecto ágil de 23 personas. Participé en el diseño de la base de datos y de la arquitectura (modelo C4), monté los entornos de prueba con Docker y la integración continua con GitHub Actions, y programé el módulo de empleados domésticos.',
+      result: 'Entregamos por sprints los módulos de seguridad, incidentes y control de accesos, con un entorno de pruebas estable y la deuda técnica bajo control.',
+      metric: null,
+      arch: '/projects/civitas/arquitectura.png',
+      stack: ['NestJS', 'PostgreSQL', 'Docker', 'GitHub Actions', 'Cloudflare R2', 'Stripe', 'Next.js', 'React', 'Tailwind CSS']
+    },
     featured: true,
     draft: false,
-    problem: 'La seguridad reaccionaba después de los incidentes, y los reportes, la comunicación y las finanzas eran lentos y poco transparentes para los residentes.',
-    decision: 'Proyecto ágil de 23 personas. Participé en el diseño de la base de datos y de la arquitectura (modelo C4), monté los entornos de prueba con Docker y la integración continua con GitHub Actions, y programé el módulo de empleados domésticos.',
-    result: 'Entregamos por sprints los módulos de seguridad, incidentes y control de accesos, con un entorno de pruebas estable y la deuda técnica bajo control.',
-    metric: null,
-    arch: '/projects/civitas/arquitectura.png',
-    stack: ['NestJS', 'PostgreSQL', 'Docker', 'GitHub Actions', 'Cloudflare R2', 'Stripe', 'Next.js', 'React', 'Tailwind CSS'],
+    visibleEn: ['personal'],
+    negocio: null,
     cover: null,
     images: [
       { src: '/projects/civitas/1.jpeg', width: 1280, height: 665, alt: 'Pantalla de inicio de sesión de Civitas con la marca UDEV' },
@@ -83,14 +112,24 @@ export const projects: Project[] = [
     name: 'CompuFest 26 · Sitio y check-in',
     summary: 'Sitio oficial del foro CompuFest 26 con registro por QR de punta a punta: gafetes generados en PDF, alta y check-in por escaneo, panel de administración en vivo y pantallas que mostraban qué pasaba en cada zona.',
     year: '2026',
-    role: 'Fullstack Developer (único desarrollador)',
+    tecnico: {
+      role: 'Fullstack Developer (único desarrollador)',
+      problem: 'El foro necesitaba en pocos días un sitio con agenda, sede, talleres y proyectos, una forma de registrar a cientos de asistentes sin listas en papel y una manera de orientar a la gente entre actividades simultáneas.',
+      decision: 'Lo construí en 2 días con apoyo de agentes de IA: Nuxt y Cloudflare Functions para el sitio y el registro, Supabase (PostgreSQL) para guardar los registros y un script en Node.js que generaba los gafetes en PDF con su QR. Las pantallas funcionaban offline con datos precargados.',
+      result: 'Se usó durante los tres días del evento: 450 asistentes registrados de 520 gafetes generados y 699 escaneos en 5 puntos de check-in.',
+      metric: 'Construido en 2 días',
+      stack: ['NuxtJS', 'Cloudflare Functions', 'Supabase', 'PostgreSQL', 'Node.js', 'Cloudflare R2']
+    },
     featured: true,
     draft: false,
-    problem: 'El foro necesitaba en pocos días un sitio con agenda, sede, talleres y proyectos, una forma de registrar a cientos de asistentes sin listas en papel y una manera de orientar a la gente entre actividades simultáneas.',
-    decision: 'Lo construí en 2 días con apoyo de agentes de IA: Nuxt y Cloudflare Functions para el sitio y el registro, Supabase (PostgreSQL) para guardar los registros y un script en Node.js que generaba los gafetes en PDF con su QR. Las pantallas funcionaban offline con datos precargados.',
-    result: 'Se usó durante los tres días del evento: 450 asistentes registrados de 520 gafetes generados y 699 escaneos en 5 puntos de check-in.',
-    metric: 'Construido en 2 días',
-    stack: ['NuxtJS', 'Cloudflare Functions', 'Supabase', 'PostgreSQL', 'Node.js', 'Cloudflare R2'],
+    visibleEn: ['personal', 'proyectos'],
+    negocio: {
+      cliente: 'CompuFest 26, foro regional de Computación',
+      situacion: 'Un foro universitario de tres días con cientos de asistentes y charlas, talleres y actividades al mismo tiempo.',
+      dolor: 'Registrar a tanta gente con listas en papel significaba filas largas en la entrada, errores al anotar y no saber cuánta gente había en cada actividad.',
+      cambio: 'Cada asistente recibió un gafete con código; en la entrada bastaba con escanearlo desde un celular, y unas pantallas mostraban qué estaba pasando en cada zona.',
+      resultado: 'Funcionó los 3 días del evento: 450 asistentes registrados y 699 entradas controladas en 5 accesos. Estuvo listo en 2 días.'
+    },
     cover: null,
     images: [
       { src: '/projects/compufest/1.png', width: 1884, height: 932, alt: 'Portada del sitio oficial del CompuFest 26: “Tecnología que nos conecta.”, con fechas y sede del foro' },
@@ -114,14 +153,18 @@ export const projects: Project[] = [
     name: 'Nexis Oaxaca · Plataforma de eventos',
     summary: 'Una versión propia y acotada de Meetup para la comunidad Nexis Oaxaca: cuentas, registro a eventos con gafete QR, check-in en la puerta, eventos en línea y panel de administración.',
     year: '2026',
-    role: 'Fullstack Developer (único desarrollador)',
+    tecnico: {
+      role: 'Fullstack Developer (único desarrollador)',
+      problem: 'Gestionábamos los eventos en Meetup, pero pagar la suscripción salía caro para una comunidad sin fines de lucro, no controlábamos el flujo de registro ni los datos de los asistentes, y había cosas de la plataforma que no nos gustaban.',
+      decision: 'Definí un PRD con las funciones indispensables y lo construí con agentes de código en paralelo: Nuxt 4 en Cloudflare Workers, Supabase para autenticación (correo y Google) y PostgreSQL con Row Level Security para los roles, R2 para archivos y Resend para correos.',
+      result: 'Una plataforma de eventos propia con costo de operación de $0, con los datos y el flujo bajo control de la comunidad y los 30 encuentros anteriores migrados desde el CMS.',
+      metric: '$0 de costo de operación',
+      stack: ['NuxtJS', 'Vue.js', 'TypeScript', 'Cloudflare Workers', 'Supabase', 'PostgreSQL', 'Cloudflare R2', 'Tailwind CSS']
+    },
     featured: true,
     draft: false,
-    problem: 'Gestionábamos los eventos en Meetup, pero pagar la suscripción salía caro para una comunidad sin fines de lucro, no controlábamos el flujo de registro ni los datos de los asistentes, y había cosas de la plataforma que no nos gustaban.',
-    decision: 'Definí un PRD con las funciones indispensables y lo construí con agentes de código en paralelo: Nuxt 4 en Cloudflare Workers, Supabase para autenticación (correo y Google) y PostgreSQL con Row Level Security para los roles, R2 para archivos y Resend para correos.',
-    result: 'Una plataforma de eventos propia con costo de operación de $0, con los datos y el flujo bajo control de la comunidad y los 30 encuentros anteriores migrados desde el CMS.',
-    metric: '$0 de costo de operación',
-    stack: ['NuxtJS', 'Vue.js', 'TypeScript', 'Cloudflare Workers', 'Supabase', 'PostgreSQL', 'Cloudflare R2', 'Tailwind CSS'],
+    visibleEn: ['personal'],
+    negocio: null,
     cover: null,
     images: [
       { src: '/projects/nexis/1.png', width: 1885, height: 923, alt: 'Portada de Nexis Oaxaca: “Descubre hasta dónde puedes llegar en tecnología.”, con la iguana de circuitos y el acceso a Mi cuenta' },
@@ -147,7 +190,8 @@ export const projects: Project[] = [
     ],
     links: { live: 'https://nexisoaxaca.tech', caseStudy: '/proyectos/nexis-oaxaca' }
   },
-  // Euphoria: oculto por ahora. Para volver a mostrarlo, descomenta el bloque (y renumera).
+  // Euphoria: oculto por ahora. Para volver a mostrarlo, descomenta el bloque, renumera y agrupa
+  // role/problem/decision/result/metric/stack en `tecnico` (y agrega visibleEn y negocio).
   // {
   //   slug: 'euphoria',
   //   number: '03',
@@ -177,15 +221,19 @@ export const projects: Project[] = [
     number: '05',
     name: 'Universidad del Istmo · Sitio web',
     summary: 'Nuevo sitio oficial de la Universidad del Istmo: rápido, adaptado a celular y con contenido que el personal publica sin depender del equipo técnico.',
-    year: '2026 – hoy',
-    role: 'Fullstack Developer',
+    year: '2026',
+    tecnico: {
+      role: 'Fullstack Developer',
+      problem: 'El sitio anterior era difícil de navegar, no se adaptaba a celulares y cada cambio pasaba por el equipo técnico, así que la información para aspirantes y estudiantes quedaba desactualizada.',
+      decision: 'Astro para generar páginas de carga rápida y Strapi como gestor de contenidos para que el personal publique noticias y eventos; despliegue automatizado con Docker Compose y GitHub Actions.',
+      result: 'Una primera versión que carga más rápido y funciona mejor en celular que el sitio anterior, en preparación para publicarse como sitio oficial.',
+      metric: null,
+      stack: ['Strapi', 'PostgreSQL', 'Docker', 'Astro', 'Tailwind CSS']
+    },
     featured: false,
     draft: false,
-    problem: 'El sitio anterior era difícil de navegar, no se adaptaba a celulares y cada cambio pasaba por el equipo técnico, así que la información para aspirantes y estudiantes quedaba desactualizada.',
-    decision: 'Astro para generar páginas de carga rápida y Strapi como gestor de contenidos para que el personal publique noticias y eventos; despliegue automatizado con Docker Compose y GitHub Actions.',
-    result: 'Una primera versión que carga más rápido y funciona mejor en celular que el sitio anterior, en preparación para publicarse como sitio oficial.',
-    metric: null,
-    stack: ['Strapi', 'PostgreSQL', 'Docker', 'Astro', 'Tailwind CSS'],
+    visibleEn: ['personal'],
+    negocio: null,
     cover: null,
     images: [
       { src: '/projects/unistmo/1.png', width: 1876, height: 970, alt: 'Portada del sitio de la Universidad del Istmo con el banner de sus tres campus' },
@@ -203,14 +251,18 @@ export const projects: Project[] = [
     name: 'Curvex',
     summary: 'Herramienta web de estadística: pruebas de hipótesis, regresiones y distribuciones de probabilidad con resultados y gráficas al instante.',
     year: '2025 – 2026',
-    role: 'Fullstack Developer',
+    tecnico: {
+      role: 'Fullstack Developer',
+      problem: 'Las opciones disponibles son demasiado complejas para un curso (SPSS, R) o son calculadoras que no muestran visualmente qué pasa con los datos.',
+      decision: 'Cálculos en un backend Laravel y una interfaz reactiva en Vue 3 con Inertia que actualiza el modelo, sus métricas y sus gráficas al cambiar los datos; desplegada en Heroku.',
+      result: 'Compañeros del curso de Estadística la usaron para comprobar sus ejercicios y entender los resultados de forma visual.',
+      metric: null,
+      stack: ['Laravel', 'PHP', 'Vue.js', 'Tailwind CSS']
+    },
     featured: false,
     draft: false,
-    problem: 'Las opciones disponibles son demasiado complejas para un curso (SPSS, R) o son calculadoras que no muestran visualmente qué pasa con los datos.',
-    decision: 'Cálculos en un backend Laravel y una interfaz reactiva en Vue 3 con Inertia que actualiza el modelo, sus métricas y sus gráficas al cambiar los datos; desplegada en Heroku.',
-    result: 'Compañeros del curso de Estadística la usaron para comprobar sus ejercicios y entender los resultados de forma visual.',
-    metric: null,
-    stack: ['Laravel', 'PHP', 'Vue.js', 'Tailwind CSS'],
+    visibleEn: ['personal'],
+    negocio: null,
     cover: null,
     images: [
       { src: '/projects/curvex/1.jpeg', width: 1055, height: 792, alt: 'Prueba de proporción Z en Curvex con el resultado de la hipótesis' },
@@ -226,14 +278,24 @@ export const projects: Project[] = [
     name: 'Hecho en Casa',
     summary: 'Plataforma de pedidos en línea para una pastelería local: catálogo, calendario de disponibilidad, pedidos personalizados e historial del cliente.',
     year: '2024 – 2025',
-    role: 'Fullstack Developer · líder de equipo',
+    tecnico: {
+      role: 'Fullstack Developer · líder de equipo',
+      problem: 'Los pedidos llegaban a mano por WhatsApp o teléfono, con errores frecuentes y sin seguimiento después de la venta.',
+      decision: 'Lideré a un equipo de 10 personas. Elegimos una sola aplicación en Laravel y Blade con MySQL para avanzar rápido con un equipo grande, coordinado con Kanban y GitFlow, y con avisos automáticos por correo al cliente.',
+      result: 'La pastelería pasó a recibir y dar seguimiento a sus pedidos en línea; el proyecto fue evaluado satisfactoriamente.',
+      metric: null,
+      stack: ['Laravel', 'PHP', 'MySQL', 'Docker', 'Blade', 'JavaScript']
+    },
     featured: false,
     draft: false,
-    problem: 'Los pedidos llegaban a mano por WhatsApp o teléfono, con errores frecuentes y sin seguimiento después de la venta.',
-    decision: 'Lideré a un equipo de 10 personas. Elegimos una sola aplicación en Laravel y Blade con MySQL para avanzar rápido con un equipo grande, coordinado con Kanban y GitFlow, y con avisos automáticos por correo al cliente.',
-    result: 'La pastelería pasó a recibir y dar seguimiento a sus pedidos en línea; el proyecto fue evaluado satisfactoriamente.',
-    metric: null,
-    stack: ['Laravel', 'PHP', 'MySQL', 'Docker', 'Blade', 'JavaScript'],
+    visibleEn: ['personal', 'proyectos'],
+    negocio: {
+      cliente: 'Una pastelería local (proyecto hecho en equipo durante la universidad)',
+      situacion: 'Una pastelería que vende pasteles por encargo y postres de temporada.',
+      dolor: 'Los pedidos llegaban por WhatsApp o por teléfono y se anotaban a mano: había errores frecuentes y ningún seguimiento después de la venta.',
+      cambio: 'Sus clientes eligen del catálogo, ven qué fechas hay disponibles y hacen su pedido en línea; reciben un aviso por correo y pueden consultar sus pedidos anteriores.',
+      resultado: 'La pastelería pasó a recibir sus pedidos en línea y a darles seguimiento desde un solo lugar.'
+    },
     cover: null,
     images: [
       { src: '/projects/hc/1.png', width: 655, height: 593, alt: 'Portada de Hecho en Casa con diseños personalizados y postres del día' },
@@ -251,7 +313,12 @@ export const projects: Project[] = [
 // La portada es la primera captura mientras no haya una imagen de portada dedicada
 for (const project of projects) project.cover ??= project.images[0] ?? null
 
-export const featuredProjects = projects.filter(p => p.featured)
-export const otherProjects = projects.filter(p => !p.featured)
+export const personalProjects = projects.filter(p => p.visibleEn.includes('personal'))
+export const businessProjects = projects.filter(p => p.visibleEn.includes('proyectos') && p.negocio)
+export const featuredProjects = personalProjects.filter(p => p.featured)
+export const otherProjects = personalProjects.filter(p => !p.featured)
 export const getProject = (slug: string) => projects.find(p => p.slug === slug) ?? null
-export const projectsUsing = (tech: string) => projects.filter(p => p.stack.includes(tech))
+export const projectsUsing = (tech: string) => personalProjects.filter(p => p.tecnico.stack.includes(tech))
+
+// "Lo más reciente" del Inicio: cambia este slug cuando publiques un proyecto nuevo
+export const recentProject = getProject('nexis-oaxaca')

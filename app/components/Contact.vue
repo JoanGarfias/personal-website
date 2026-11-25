@@ -1,106 +1,131 @@
 <template>
-  <section id="contacto" class="section-space relative">
+  <section :id="props.sectionId" class="section-space relative">
     <div class="grid grid-cols-1 gap-12 xl:grid-cols-12 xl:gap-14">
       <div class="xl:col-span-5">
-        <SectionLabel index="05" label="Contacto" />
+        <SectionLabel :index="props.index" label="Contacto" />
         <component :is="titleTag" class="section-title mb-6 mt-6">
-          Vamos a <span class="text-accent-word">colaborar.</span>
+          {{ texto.titulo[0] }} <span class="text-accent-word">{{ texto.titulo[1] }}</span>
         </component>
-        <p class="text-lg leading-relaxed text-ink-body">
-          ¿Tienes un proyecto, una vacante o un evento? Escríbeme y te respondo.
-        </p>
+        <p class="text-lg leading-relaxed text-ink-body">{{ texto.intro }}</p>
 
         <ul class="mt-10 border-t border-line">
-          <li v-for="channel in channels" :key="channel.label" class="border-b border-line">
-            <a :href="channel.link" :target="channel.external ? '_blank' : undefined" :rel="channel.external ? 'noopener noreferrer' : undefined" class="channel group">
+          <li class="border-b border-line">
+            <a :href="perfil.enlaces.linkedin" target="_blank" rel="noopener noreferrer" class="channel group">
               <span class="flex items-center gap-4">
-                <component :is="channel.icon" class="h-5 w-5 text-ink-muted transition-colors group-hover:text-accent-ink" aria-hidden="true" />
-                <span class="text-sm text-ink-muted">{{ channel.label }}</span>
+                <LucideLinkedin class="h-5 w-5 text-ink-muted transition-colors group-hover:text-accent-ink" aria-hidden="true" />
+                <span class="text-sm text-ink-muted">LinkedIn</span>
               </span>
               <span class="text-sm font-medium text-ink-strong transition-transform group-hover:translate-x-1">
-                {{ channel.value }}<span v-if="channel.external" class="sr-only"> (abre en otra pestaña)</span>
+                joangarfias<span class="sr-only"> (abre en otra pestaña)</span>
               </span>
             </a>
           </li>
+          <li class="border-b border-line">
+            <button type="button" class="channel group w-full cursor-pointer text-left" data-evento="correo" @click="abrirCorreo">
+              <span class="flex items-center gap-4">
+                <LucideMail class="h-5 w-5 text-ink-muted transition-colors group-hover:text-accent-ink" aria-hidden="true" />
+                <span class="text-sm text-ink-muted">Email</span>
+              </span>
+              <span class="text-sm font-medium text-ink-strong transition-transform group-hover:translate-x-1">Envíame un correo</span>
+            </button>
+          </li>
         </ul>
 
-        <a href="/cv.pdf" download="CV_Joan_Garfias.pdf" class="button-secondary mt-8">
+        <!-- El CV no aplica a quien busca un proyecto para su negocio -->
+        <a v-if="props.motivo !== 'proyecto'" :href="perfil.enlaces.cv" :download="perfil.enlaces.cvNombre" class="button-secondary mt-8" data-evento="cv">
           <LucideDownload class="h-4 w-4" aria-hidden="true" />
           Descargar CV (PDF)
         </a>
       </div>
 
       <div class="w-full max-w-full xl:col-span-7">
-        <form novalidate class="card relative w-full space-y-6 rounded-feature p-5 md:p-8" @submit.prevent="handleSubmit">
+        <form novalidate class="card relative w-full space-y-6 rounded-feature p-5 md:p-8" :data-motivo="motivo" @submit.prevent="handleSubmit">
+          <!-- Motivo: se oculta cuando la página ya lo fija (Contrátame, sitio de proyectos) -->
+          <fieldset v-if="!fijo" class="space-y-3">
+            <legend class="field-label mb-3">¿Sobre qué quieres hablar?</legend>
+            <div class="flex flex-wrap gap-2">
+              <label v-for="m in MOTIVOS" :key="m" class="motivo">
+                <input v-model="motivo" type="radio" name="motivo" :value="m" class="sr-only" :disabled="isPending" @change="onMotivoChange" />
+                <span>{{ DEFINICIONES[m].label }}</span>
+              </label>
+            </div>
+          </fieldset>
+
           <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
-            <div class="space-y-2">
-              <label for="name" class="field-label">Nombre</label>
-              <input
-                id="name"
-                ref="nameRef"
-                v-model.trim="form.name"
-                type="text"
-                name="name"
-                autocomplete="name"
-                required
-                placeholder="Ej. Juan Pérez"
-                class="field"
-                :aria-invalid="!!errors.name"
-                :aria-describedby="errors.name ? 'name-error' : undefined"
+            <div
+              v-for="campo in campos"
+              :key="`${motivo}-${campo.id}`"
+              class="space-y-2"
+              :class="{ 'md:col-span-2': campo.completo, 'is-destacado': campo.destacado }"
+            >
+              <label :for="fid(campo.id)" class="field-label">
+                {{ campo.label }}<span v-if="campo.requerido" class="text-accent-ink" aria-hidden="true"> *</span>
+              </label>
+              <p v-if="campo.ayuda" :id="`${fid(campo.id)}-ayuda`" class="field-help">{{ campo.ayuda }}</p>
+
+              <textarea
+                v-if="campo.tipo === 'textarea'"
+                :id="fid(campo.id)"
+                v-model="valores[campo.id]"
+                :name="campo.id"
+                :rows="campo.destacado ? 5 : 4"
+                :maxlength="campo.max"
+                :placeholder="campo.placeholder"
+                :required="campo.requerido"
+                class="field resize-y"
+                :aria-invalid="!!errores[campo.id]"
+                :aria-describedby="describedBy(campo)"
                 :disabled="isPending"
-                @blur="touched && validate()"
-              />
-              <p v-if="errors.name" id="name-error" class="field-error">{{ errors.name }}</p>
-            </div>
-            <div class="space-y-2">
-              <label for="email" class="field-label">Correo electrónico</label>
-              <input
-                id="email"
-                ref="emailRef"
-                v-model.trim="form.email"
-                type="email"
-                name="email"
-                autocomplete="email"
-                required
-                placeholder="tu@email.com"
-                class="field"
-                :aria-invalid="!!errors.email"
-                :aria-describedby="errors.email ? 'email-error' : undefined"
+                @blur="touched && revalidar()"
+              ></textarea>
+
+              <select
+                v-else-if="campo.tipo === 'select'"
+                :id="fid(campo.id)"
+                v-model="valores[campo.id]"
+                :name="campo.id"
+                :required="campo.requerido"
+                class="field field-select"
+                :aria-invalid="!!errores[campo.id]"
+                :aria-describedby="describedBy(campo)"
                 :disabled="isPending"
-                @blur="touched && validate()"
+              >
+                <option value="">Elige una opción</option>
+                <option v-for="o in campo.opciones" :key="o.value" :value="o.value">{{ o.label }}</option>
+              </select>
+
+              <input
+                v-else
+                :id="fid(campo.id)"
+                v-model.trim="valores[campo.id]"
+                :type="campo.tipo"
+                :name="campo.id"
+                :maxlength="campo.max"
+                :autocomplete="campo.autocomplete ?? 'off'"
+                :inputmode="campo.tipo === 'tel' ? 'tel' : undefined"
+                :placeholder="campo.placeholder"
+                :required="campo.requerido"
+                class="field"
+                :aria-invalid="!!errores[campo.id]"
+                :aria-describedby="describedBy(campo)"
+                :disabled="isPending"
+                @blur="touched && revalidar()"
               />
-              <p v-if="errors.email" id="email-error" class="field-error">{{ errors.email }}</p>
+
+              <p v-if="errores[campo.id]" :id="`${fid(campo.id)}-error`" class="field-error">{{ errores[campo.id] }}</p>
             </div>
           </div>
 
-          <div class="space-y-2">
-            <label for="subject" class="field-label">Asunto</label>
-            <select id="subject" v-model="form.subject" name="subject" class="field field-select" :disabled="isPending">
-              <option v-for="s in contactSubjects" :key="s.value" :value="s.value">{{ s.label }}</option>
-            </select>
+          <p class="text-sm text-ink-muted"><span class="text-accent-ink" aria-hidden="true">*</span> Obligatorio</p>
+
+          <!-- Turnstile (solo si hay NUXT_PUBLIC_TURNSTILE_SITE_KEY): verificación anti-bots de Cloudflare -->
+          <div v-if="turnstileSiteKey" class="space-y-2">
+            <div ref="turnstileEl"></div>
+            <p v-if="errores.turnstile" class="field-error">{{ errores.turnstile }}</p>
           </div>
 
-          <div class="space-y-2">
-            <label for="message" class="field-label">Mensaje</label>
-            <textarea
-              id="message"
-              ref="messageRef"
-              v-model.trim="form.message"
-              name="message"
-              required
-              rows="4"
-              :placeholder="messagePlaceholder"
-              class="field resize-none"
-              :aria-invalid="!!errors.message"
-              :aria-describedby="errors.message ? 'message-error' : undefined"
-              :disabled="isPending"
-              @blur="touched && validate()"
-            ></textarea>
-            <p v-if="errors.message" id="message-error" class="field-error">{{ errors.message }}</p>
-          </div>
-
-          <!-- Honeypot/Lock field -->
-          <input v-model="form.lock" type="text" name="lock" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
+          <!-- Honeypot: debe llegar vacío; si un bot lo llena, la API descarta el mensaje -->
+          <input v-model="lock" type="text" name="lock" class="hidden" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
           <button
             type="submit"
@@ -112,24 +137,24 @@
               <LucideLoader2 class="h-4 w-4 animate-spin" aria-hidden="true" />
             </template>
             <template v-else>
-              Enviar mensaje
+              {{ texto.boton }}
               <LucideSend class="arrow-swap h-4 w-4" aria-hidden="true" />
             </template>
           </button>
 
           <!-- Estados: éxito y error en línea, anunciados a lectores de pantalla -->
-          <div id="form-status" role="status" aria-live="polite">
-            <p v-if="isSuccess" class="status status--success">
+          <div role="status" aria-live="polite">
+            <p v-if="isSuccess && enviado" class="status status--success">
               <LucideCheckCircle class="h-5 w-5 shrink-0" aria-hidden="true" />
-              Listo, recibí tu mensaje. Te respondo pronto.
+              {{ CONFIRMACIONES[enviado] }} {{ tiempoRespuesta() }}
             </p>
           </div>
           <div role="alert">
             <p v-if="error" class="status status--error">
               <LucideAlertCircle class="h-5 w-5 shrink-0" aria-hidden="true" />
               <span>
-                {{ error }} Intenta de nuevo o escríbeme directo a
-                <a :href="`mailto:${CONTACT_EMAIL}`" class="font-bold underline underline-offset-2">Envíame un correo</a>.
+                {{ error }} Intenta de nuevo o
+                <button type="button" class="cursor-pointer font-bold underline underline-offset-2" @click="abrirCorreo">envíame un correo</button>.
               </span>
             </p>
           </div>
@@ -139,79 +164,153 @@
   </section>
 </template>
 
-<script setup>
+<script setup lang="ts">
 import { Download as LucideDownload, Linkedin as LucideLinkedin, Mail as LucideMail, Send as LucideSend, LucideCheckCircle, LucideAlertCircle, LucideLoader2 } from 'lucide-vue-next'
-import { CONTACT_EMAIL, contactSubjects, useContact } from '../composables/useContact'
+import { camposVisibles, CONFIRMACIONES, DEFINICIONES, esMotivo, MOTIVOS, tiempoRespuesta, validarContacto, type Campo, type Motivo } from '#shared/contacto'
+import { perfil } from '~/content/perfil'
 
-// En su página propia este título es el H1; en la home es H2
-defineProps({ titleTag: { type: String, default: 'h2' } })
+const props = withDefaults(defineProps<{
+  // En su página propia este título es el H1; en otras páginas es H2
+  titleTag?: string
+  // Motivo fijo: oculta el selector (ej. "empleo" en Contrátame, "proyecto" en el sitio de proyectos)
+  motivo?: Motivo | null
+  sectionId?: string
+  index?: string
+}>(), { titleTag: 'h2', motivo: null, sectionId: 'contacto', index: '01' })
 
 const { isPending, isSuccess, error, sendEmail, resetStatus } = useContact()
 const router = useRouter()
 
-const emptyForm = () => ({
-  name: '',
-  email: '',
-  subject: 'proyecto',
-  message: '',
-  lock: '' // Honeypot: debe llegar vacío; si un bot lo llena, la API descarta el mensaje
-})
-
-const form = ref(emptyForm())
-const errors = ref({})
+const fijo = computed(() => esMotivo(props.motivo))
+// Sin motivo en la URL se abre en "empleo": es la prioridad del sitio personal
+const motivo = ref<Motivo>(props.motivo ?? 'empleo')
+const valores = reactive<Record<string, string>>({})
+const errores = ref<Record<string, string>>({})
 const touched = ref(false)
-const nameRef = ref(null)
-const emailRef = ref(null)
-const messageRef = ref(null)
+const lock = ref('')
+const enviado = ref<Motivo | null>(null)
 
-// ?asunto=evento (desde "Invítame a tu evento") preselecciona el asunto.
+const campos = computed(() => camposVisibles(motivo.value))
+// Los selects arrancan en "" para que se vea "Elige una opción" (con undefined quedan en blanco)
+watch(campos, (list) => {
+  for (const c of list) if (c.tipo === 'select' && valores[c.id] === undefined) valores[c.id] = ''
+}, { immediate: true })
+const fid = (id: string) => `${props.sectionId}-${id}`
+const describedBy = (campo: Campo) =>
+  [campo.ayuda && `${fid(campo.id)}-ayuda`, errores.value[campo.id] && `${fid(campo.id)}-error`].filter(Boolean).join(' ') || undefined
+
+const textos: Record<Motivo, { titulo: [string, string]; intro: string; boton: string }> = {
+  empleo: {
+    titulo: ['Hablemos de', 'tu vacante.'],
+    intro: `Busco ${perfil.disponibilidad.puesto.toLowerCase()}, ${perfil.disponibilidad.modalidad.toLowerCase()}. Cuéntame del puesto y del equipo.`,
+    boton: 'Enviar'
+  },
+  evento: {
+    titulo: ['Invítame a', 'tu evento.'],
+    intro: 'Doy charlas y talleres sobre IA y desarrollo de software. Cuéntame la fecha, el formato y a quién va dirigido.',
+    boton: 'Enviar invitación'
+  },
+  proyecto: {
+    titulo: ['Cuéntame', 'qué te pasa.'],
+    intro: 'No necesitas saber de tecnología. Explícame el problema con tus palabras y te digo cómo te puedo ayudar.',
+    boton: 'Enviar'
+  },
+  otro: {
+    titulo: ['Vamos a', 'platicar.'],
+    intro: '¿Tienes algo que no encaja en lo anterior? Escríbeme.',
+    boton: 'Enviar mensaje'
+  }
+}
+const texto = computed(() => textos[motivo.value])
+
+// ?motivo=evento (o el antiguo ?asunto=) preselecciona el motivo; &servicio=<id> el servicio.
 // Al hidratar una página prerenderizada la query llega después del montaje, así que se observa.
 onMounted(() => {
-  watch(() => router.currentRoute.value.query.asunto, (asunto) => {
-    if (contactSubjects.some(s => s.value === asunto)) form.value.subject = asunto
+  watch(() => router.currentRoute.value.query, (query) => {
+    const pedido = query.motivo ?? query.asunto
+    if (!fijo.value && esMotivo(pedido)) motivo.value = pedido
+    const servicio = typeof query.servicio === 'string' ? query.servicio : null
+    if (servicio && DEFINICIONES.proyecto.campos.find(c => c.id === 'servicio')?.opciones?.some(o => o.value === servicio)) {
+      valores.servicio = servicio
+    }
   }, { immediate: true })
 })
 
-const messagePlaceholder = computed(() => ({
-  proyecto: 'Cuéntame sobre tu proyecto o idea…',
-  empleo: 'Cuéntame sobre el puesto y el equipo…',
-  evento: 'Evento, fecha, ciudad y tema que te interesa…',
-  otro: 'Escribe tu mensaje…'
-})[form.value.subject])
+const revalidar = () => {
+  errores.value = validarContacto(motivo.value, valores).errores
+  return errores.value
+}
 
-const validate = () => {
-  const next = {}
-  if (!form.value.name) next.name = 'Escribe tu nombre.'
-  if (!form.value.email) next.email = 'Escribe tu correo.'
-  else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.value.email)) next.email = 'Revisa el formato del correo, ej. tu@email.com.'
-  if (!form.value.message) next.message = 'Escribe tu mensaje.'
-  else if (form.value.message.length < 10) next.message = 'Cuéntame un poco más (mínimo 10 caracteres).'
-  errors.value = next
-  return next
+const onMotivoChange = () => {
+  errores.value = {}
+  touched.value = false
+  resetStatus()
+}
+
+// Turnstile: widget explícito para poder reiniciarlo después de cada envío (cada token sirve una sola vez)
+const { turnstileSiteKey, siteTarget } = useRuntimeConfig().public
+const turnstileEl = ref<HTMLElement | null>(null)
+const turnstileToken = ref('')
+let turnstileId: string | undefined
+
+type TurnstileApi = {
+  render: (el: HTMLElement, opts: Record<string, unknown>) => string
+  reset: (id?: string) => void
+}
+
+onMounted(() => {
+  if (!turnstileSiteKey) return
+  const render = () => {
+    const api = (window as unknown as { turnstile?: TurnstileApi }).turnstile
+    if (!api || !turnstileEl.value || turnstileId) return
+    turnstileId = api.render(turnstileEl.value, {
+      sitekey: turnstileSiteKey,
+      action: 'contacto',
+      language: 'es',
+      callback: (token: string) => { turnstileToken.value = token; delete errores.value.turnstile },
+      'expired-callback': () => { turnstileToken.value = '' },
+      'error-callback': () => { turnstileToken.value = '' }
+    })
+  }
+  if ((window as unknown as { turnstile?: TurnstileApi }).turnstile) return render()
+  const script = document.createElement('script')
+  script.src = 'https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit'
+  script.async = true
+  script.onload = render
+  document.head.appendChild(script)
+})
+
+const resetTurnstile = () => {
+  turnstileToken.value = ''
+  if (turnstileId) (window as unknown as { turnstile?: TurnstileApi }).turnstile?.reset(turnstileId)
 }
 
 const handleSubmit = async () => {
   touched.value = true
   resetStatus()
-  const found = validate()
-  const first = ['name', 'email', 'message'].find(key => found[key])
+  const found = revalidar()
+  const first = campos.value.find(c => found[c.id])
   if (first) {
-    ({ name: nameRef, email: emailRef, message: messageRef })[first].value?.focus()
+    document.getElementById(fid(first.id))?.focus()
+    return
+  }
+  if (turnstileSiteKey && !turnstileToken.value) {
+    errores.value = { ...errores.value, turnstile: 'Completa la verificación de seguridad antes de enviar.' }
     return
   }
 
-  await sendEmail({ ...form.value })
+  const { datos } = validarContacto(motivo.value, valores)
+  const actual = motivo.value
+  await sendEmail(actual, datos, lock.value, turnstileToken.value)
+  resetTurnstile()
 
   if (isSuccess.value) {
-    form.value = emptyForm()
+    enviado.value = actual
+    track(`formulario-${actual}`, { sitio: String(siteTarget) })
+    for (const key of Object.keys(valores)) valores[key] = ''
     touched.value = false
   }
 }
-
-const channels = [
-  { label: 'Email', value: 'Envíame un correo', link: `mailto:${CONTACT_EMAIL}`, icon: LucideMail, external: false },
-  { label: 'LinkedIn', value: 'joangarfias', link: 'https://linkedin.com/in/joangarfias', icon: LucideLinkedin, external: true }
-]
 </script>
 
 <style scoped>
@@ -225,10 +324,53 @@ const channels = [
 }
 
 .field-label {
+  display: block;
   margin-left: 0.25rem;
   color: var(--text-strong);
   font-size: 0.8125rem;
   font-weight: 600;
+}
+
+.field-help {
+  margin-left: 0.25rem;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+
+/* "¿Qué problema quieres resolver?": la pregunta principal del motivo proyecto */
+.is-destacado .field-label {
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+}
+.is-destacado .field { border-color: var(--border-strong); }
+
+.motivo { position: relative; }
+
+.motivo span {
+  display: inline-flex;
+  min-height: 2.75rem;
+  align-items: center;
+  border: 1px solid var(--border-strong);
+  border-radius: 999px;
+  padding: 0.5rem 1rem;
+  color: var(--text-strong);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 180ms var(--ease-brand), border-color 180ms var(--ease-brand), color 180ms var(--ease-brand);
+}
+
+.motivo span:hover { background: var(--surface-2); }
+.motivo input:checked + span {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.motivo input:focus-visible + span {
+  outline: 2px solid var(--text-strong);
+  outline-offset: 2px;
 }
 
 .field {

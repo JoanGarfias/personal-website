@@ -1,6 +1,6 @@
 ---
 id: tiven
-period: Octubre de 2025 - Actualidad
+period: Diciembre de 2025 - Actualidad
 team: Colaborativo
 teamSize: 6
 collaborators: ["Joan Garfias", "Karla G.", "Jeremy O.", "Sadie B.", "Saul P.", "Jimmy V."]

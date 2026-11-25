@@ -9,6 +9,7 @@ tags:
   - nuxt
   - cloudflare
   - notas
+categoria: tecnico
 ---
 
 Este es el primer post del blog. La idea es tener un lugar para escribir con más calma lo que aprendo construyendo software: decisiones de backend, cloud y lo que sale bien (y mal) en proyectos reales.

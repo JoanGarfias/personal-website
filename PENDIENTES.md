@@ -6,6 +6,29 @@ Contenido que debes aportar o validar. En el sitio, cada hueco se ve como `PENDI
 
 Ordenado por prioridad: hero y comunidad primero.
 
+## 0. Reestructuración por audiencia (`[CONFIRMAR]`)
+
+Datos centralizados en `app/content/perfil.ts`, `metricas.ts`, `experiencia.ts` y `projects.ts` (vistas `tecnico` / `negocio`). Fechas y cifras salen del CV.
+
+| Tema | Dónde | Qué falta |
+|---|---|---|
+| Enlace para agendar | `perfil.ts` → `agenda` | URL de Cal.com/Calendly. Mientras sea `null`, "Agendar conversación" baja al formulario de Contrátame |
+| Modalidad | `perfil.ts` → `disponibilidad.modalidad` | Hoy dice "Remoto desde Oaxaca". ¿Aceptas también híbrido, presencial o reubicarte? |
+| YouTube | `perfil.ts` → `enlaces.youtube` | El sitio tenía dos handles distintos (`@joan_dev` y `@joan-garfias`). Quedó `@joan_dev`: confirma cuál es el bueno |
+| Sitio de proyectos: despliegue | `docs/despliegue.md` | Crear el segundo proyecto de Cloudflare Pages (`SITE_TARGET=proyectos`) y el dominio `proyectos.joangarfias.me` |
+| Sitio de proyectos: enlace | `perfil.ts` → `sitioProyectos` | Cuando el subdominio cargue, pon su URL. Mientras sea `null`, la puerta de negocios lleva a `/contacto?motivo=proyecto` |
+| Subdominio y marca | `nuxt.config.ts` → `SITES.proyectos` | Se usó `proyectos.` y "Joan Garfias — Proyectos" por defecto. Si cambian, edítalos ahí (o `PROYECTOS_URL` en Cloudflare) |
+| Textos del sitio de proyectos | `app/pages-proyectos/index.vue`, `app/content/servicios.ts` | Hero, "Ideal para", pasos, preguntas frecuentes y "Quién está detrás" son redacción nueva: valídalos. Sin precios ni plazos inventados |
+| Tiven como caso freelance | `projects.ts` → `tiven.visibleEn` | ¿Se puede mostrar en el sitio de proyectos? Hoy solo `['personal']` |
+| Euphoria | `projects.ts` (bloque comentado) | Qué se hizo y resultados reales para usarlo como caso |
+| Presupuesto | `shared/contacto.ts` → `RANGOS_PRESUPUESTO` | `[DEFINIR RANGOS]`. Con `null` el campo no aparece en el formulario |
+| Tiempo de respuesta | `shared/contacto.ts` → `TIEMPO_RESPUESTA` | `[DEFINIR]`, ej. "en menos de 48 horas". Con `null` la confirmación dice "Te respondo pronto" |
+| Comunidad: por qué | `community.ts` → `communityWhy` | Frase nueva sobre la brecha de oportunidades en el Istmo: valida la redacción |
+| Comunidad: temas | `community.ts` → `talkTopics` | 5 temas que salen de charlas que ya diste; ajusta títulos o agrega temas nuevos |
+| Blog: categoría y etiquetas | `content/blog/*.md` → `categoria`, `tags` | Cada post nuevo necesita `categoria` (`tecnico`, `comunidad` o `reflexiones`; en Studio sale como lista). Sin ella queda en "reflexiones". El post de INROADS no tiene etiquetas |
+| Blog en el menú | `app/utils/blog.ts` → `BLOG_MIN_POSTS_NAV` | Hoy en 1 (se muestra con 3 posts). Súbelo cuando quieras que el menú espere a tener más |
+| Post de INROADS | `content/blog/mentoria-inroads.md` → `date` | Tiene fecha 2026-12-21 (futura) y por eso sale como el post más reciente en el Inicio |
+
 ## 1. Fotos, videos y datos
 
 | Sección | Componente/archivo | Tipo | Qué falta | Especificación (ratio, tamaño, formato) |
@@ -20,7 +43,7 @@ Ordenado por prioridad: hero y comunidad primero.
 | Comunidad | `community.ts` → `communityIntro` | info | Por qué te importa la comunidad tech en Oaxaca | 1–2 frases |
 | Comunidad · Nexis | `community.ts` → `nexis.photo` | foto | Foto grupal de un evento de Nexis | 16/9, mín. 1600×900 px, JPG/WebP |
 | Comunidad · Nexis | `community.ts` → `nexis.participation` | info | En qué has participado dentro de Nexis | 1–2 frases |
-| Comunidad · Nexis | `community.ts` → `nexis.members`, `nexis.events` | dato | Cifras de miembros y eventos | Texto corto, ej. `120+` |
+| Comunidad · Nexis | `app/content/metricas.ts` → `nexisMiembros`, `nexisEventos` | dato | Cifras de miembros y eventos (hoy 72+ y 30+, del CV) | Número + sufijo |
 | Comunidad · Nexis | `community.ts` → `nexis.url` | link | Link a la comunidad | URL completa |
 | Comunidad · YouTube | `community.ts` → `youtube.videoId`, `videoTitle` | video | Video destacado del canal | ID de YouTube (lo que va después de `v=`) y su título. Se carga con facade (miniatura + play) |
 | Proyectos | `app/content/projects.ts` → `euphoria.result` | dato | Resultado real de Euphoria (hoy solo hay "resultado esperado") | 1 frase, cuando esté publicado |
@@ -38,7 +61,7 @@ Ordenado por prioridad: hero y comunidad primero.
 | Sección | Archivo | Qué validar | Cómo marcarlo como validado |
 |---|---|---|---|
 | Proyectos (×6) | `app/content/projects.ts` | `problem`, `decision`, `result`, `role`, `year` y la métrica de Tiven (−30% tiempo administrativo). Todo sale de tu `.md`, resumido a 1 frase | `draft: false` en cada proyecto |
-| Sobre mí | `app/content/about.ts` | 3 párrafos reescritos (incluye "proyectos para negocios reales de mi región") y las 3 cards | `draft: false` en cada uno |
+| Sobre mí | `app/content/about.ts` | Los 3 párrafos se reescribieron para el Inicio (de dónde soy, qué me mueve, sectores del CV). Se quitó el de "developer relations, soluciones técnicas y producto" | Revisa la redacción |
 | Caso de estudio UNISTMO | `app/content/proyectos/unistmo-web.md` | Dice "rendimiento excepcional"; la guía de marca prohíbe "excepcional" | Edita la frase |
 | Alt de capturas | `app/content/projects.ts` → `images[].alt` | Los alt se escribieron viendo cada captura | Revisa sobre todo `civitas/4.jpeg` (videollamada con tu equipo): ¿quieres publicarla? |
 
@@ -46,11 +69,11 @@ Ordenado por prioridad: hero y comunidad primero.
 
 | Tema | Dónde | Qué falta |
 |---|---|---|
-| Correo de contacto | `app/composables/useContact.ts` → `CONTACT_EMAIL` | Confirmar si es `joanpagarfk@gmail.com` (el que estaba en el sitio) u otro. Se usa en Contacto y como alternativa en el error del formulario. El ícono de email del footer (`Footer.vue`) tiene el correo escrito aparte |
+| Correo de contacto | `app/utils/correo.ts` | Resuelto. El correo nunca se muestra como texto: se arma en el navegador al hacer clic en "Envíame un correo" |
 | Formulario | `server/api/contacto.post.ts` (Pages Function en Cloudflare) | Configura los secretos `NUXT_RESEND_API_KEY` y `NUXT_CONTACT_EMAIL` en el proyecto `personal-website` de Cloudflare Pages (se despliega desde GitHub con `pnpm run build`; `generate` no incluye la función) |
 | Dominio | DNS del dominio | Confirma que `joangarfias.me` (sin www) apunta a GitHub Pages para que redirija a `www.joangarfias.me`, que es el canonical |
 | Pendientes en producción | Cloudflare Pages (`personal-website`) | Cuando todo esté listo, agrega la variable `NUXT_PUBLIC_SHOW_PENDING=false` y vuelve a desplegar |
 | Fuente display | `app/app.config.ts` → `brandFonts` | Hoy en `false` (fuente del sistema). En `true` usa Space Grotesk + JetBrains Mono; habría que bajar el tracking del titular a unos −0.045em |
 | Divisor de firma | `app/app.config.ts` → `signature` | Hoy en `true`. Pon `false` para quitar la onda de audio de Sobre mí |
 | Certificaciones futuras | `app/content/stack.ts` → `certifications` | Agrega aquí nuevas certificaciones cuando las tengas |
-| Limpieza opcional | `app/components/bits/AnimatedContent.vue`, `BlurText.vue`, `BorderGlow.vue`, `app/utils/cn.ts` | Ya no se usan (la navegación dejó GSAP por CSS). Si los borras, también puedes quitar `gsap` y `motion-v` de `package.json` |
+| Limpieza opcional | `app/components/bits/AnimatedContent.vue`, `BlurText.vue`, `BorderGlow.vue`, `app/utils/cn.ts`, `app/components/StackMarquee.vue` (salió del hero) | Ya no se usan (la navegación dejó GSAP por CSS). Si los borras, también puedes quitar `gsap` y `motion-v` de `package.json` |

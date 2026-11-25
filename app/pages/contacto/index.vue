@@ -1,10 +1,8 @@
 <script setup lang="ts">
-useHead({
-  title: 'Contacto | Joan Garfias',
-  meta: [
-    { name: 'description', content: 'Escríbeme sobre un proyecto, una oportunidad de empleo o una invitación a tu evento.' }
-  ]
-})
+const title = 'Contacto | Joan Garfias'
+const description = 'Escríbeme sobre una vacante, una invitación a tu evento o un proyecto para tu negocio.'
+
+useSeoMeta({ title, description, ogTitle: title, ogDescription: description, twitterTitle: title, twitterDescription: description })
 </script>
 
 <template>

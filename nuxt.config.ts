@@ -1,34 +1,69 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { projects } from './app/content/projects'
+import { perfil } from './app/content/perfil'
+import { personalProjects } from './app/content/projects'
 import tailwindcss from "@tailwindcss/vite";
 
-const SITE_URL = 'https://www.joangarfias.me'
-const SITE_TITLE = 'Joan Garfias | Desarrollador de Software · Backend & Cloud'
-const SITE_DESCRIPTION = 'Construyo software con propósito desde Oaxaca, México. Desarrollador de software enfocado en backend, cloud e infraestructura.'
+// Dos sitios desde el mismo repo (ver docs/despliegue.md):
+//   SITE_TARGET=personal  (por defecto) → www.joangarfias.me        páginas en app/pages
+//   SITE_TARGET=proyectos               → proyectos.joangarfias.me   páginas en app/pages-proyectos
+// Comparten componentes, estilos, contenido y /api/contacto. Cada uno tiene su canonical, sitemap, robots y metadatos.
+const SITE_TARGET = process.env.SITE_TARGET === 'proyectos' ? 'proyectos' : 'personal'
+const isProyectos = SITE_TARGET === 'proyectos'
+
+const SITES = {
+  personal: {
+    url: 'https://www.joangarfias.me',
+    name: 'Joan Garfias',
+    // Salen de app/content/perfil.ts
+    title: `${perfil.nombre} | ${perfil.titular}`,
+    description: `${perfil.identidad} ${perfil.disponibilidad.egreso}.`,
+    // 1200×630, generadas con scripts/og-images.mjs
+    ogImage: '/og-personal.png',
+    ogImageAlt: `${perfil.nombre}, ${perfil.titular}`
+  },
+  proyectos: {
+    url: process.env.PROYECTOS_URL || 'https://proyectos.joangarfias.me',
+    name: 'Joan Garfias — Proyectos',
+    title: 'Joan Garfias — Proyectos | Soluciones para tu negocio',
+    description: 'Tu negocio no debería depender de libretas, mensajes perdidos y horas de trabajo manual. Te ayudo a resolverlo, desde Oaxaca y a distancia.',
+    ogImage: '/og-proyectos.png',
+    ogImageAlt: 'Tu negocio no debería depender de libretas, mensajes perdidos y horas de trabajo manual.'
+  }
+} as const
+
+const SITE = SITES[SITE_TARGET]
+const SITE_URL = SITE.url
+const SITE_TITLE = SITE.title
+const SITE_DESCRIPTION = SITE.description
 
 // Cada caso de estudio publicado se prerenderiza como HTML estático (los comentados en projects.ts no)
-const projectRoutes = projects.map(p => p.links.caseStudy)
+const projectRoutes = personalProjects.map(p => p.links.caseStudy)
+
+// Editor visual en /_studio (login con GitHub), solo en el sitio personal.
+// Cada publicación es un commit en main y Cloudflare redespliega los dos sitios.
+// Secretos: NUXT_STUDIO_AUTH_GITHUB_CLIENT_ID y NUXT_STUDIO_AUTH_GITHUB_CLIENT_SECRET (ver .env.example)
+const studio = {
+  // Cloudflare Pages no está entre las plataformas que Studio detecta solas
+  repository: {
+    provider: 'github',
+    owner: 'JoanGarfias',
+    repo: 'personal-website',
+    branch: 'main',
+    // El repo es público: el login pide public_repo en vez de acceso a todos los repos privados
+    private: false
+  },
+  i18n: { defaultLocale: 'es' },
+  git: { commit: { messagePrefix: 'content:' } }
+}
 
 export default defineNuxtConfig({
   ssr: true,
   compatibilityDate: '2026-04-03',
   devtools: { enabled: true },
-  modules: ['@nuxt/content', '@nuxt/image', 'nuxt-studio'],
-  // Editor visual en /_studio (login con GitHub). Cada publicación es un commit en main y Cloudflare redespliega.
-  // Secretos: NUXT_STUDIO_AUTH_GITHUB_CLIENT_ID y NUXT_STUDIO_AUTH_GITHUB_CLIENT_SECRET (ver .env.example)
-  studio: {
-    // Cloudflare Pages no está entre las plataformas que Studio detecta solas
-    repository: {
-      provider: 'github',
-      owner: 'JoanGarfias',
-      repo: 'personal-website',
-      branch: 'main',
-      // El repo es público: el login pide public_repo en vez de acceso a todos los repos privados
-      private: false
-    },
-    i18n: { defaultLocale: 'es' },
-    git: { commit: { messagePrefix: 'content:' } }
-  },
+  modules: ['@nuxt/content', '@nuxt/image', ...(isProyectos ? [] : ['nuxt-studio'])],
+  ...(isProyectos ? {} : { studio }),
+  // El sitio de proyectos usa su propia carpeta de páginas (sin navegación del sitio personal)
+  dir: { pages: isProyectos ? 'pages-proyectos' : 'pages' },
   content: {
     // node:sqlite (Node ≥ 22.5) evita compilar better-sqlite3, que pnpm bloquea (allowBuilds)
     experimental: { sqliteConnector: 'native' },
@@ -87,9 +122,11 @@ export default defineNuxtConfig({
   $development: {
     image: { provider: 'ipx' }
   },
-  routeRules: {
-    // El stack ahora vive dentro de Proyectos
-    '/habilidades': { redirect: { to: '/#stack', statusCode: 301 } },
+  routeRules: isProyectos ? { '/**': { prerender: true } } : {
+    // URLs anteriores a la reestructuración por audiencia (las anclas /#… las redirige pages/index.vue)
+    '/proyectos': { redirect: { to: '/contratame#proyectos', statusCode: 301 } },
+    '/habilidades': { redirect: { to: '/contratame#stack', statusCode: 301 } },
+    '/sobre-mi': { redirect: { to: '/#sobre-mi', statusCode: 301 } },
     // Studio: login y API corren en el worker, nunca como HTML estático
     '/_studio': { prerender: false },
     '/__nuxt_studio/**': { prerender: false },
@@ -100,10 +137,23 @@ export default defineNuxtConfig({
     // Solo servidor (formulario de contacto): NUXT_RESEND_API_KEY y NUXT_CONTACT_EMAIL
     resendApiKey: '',
     contactEmail: '',
+    // Turnstile (opcional): con secreto, /api/contacto exige un token válido. NUXT_TURNSTILE_SECRET y
+    // NUXT_TURNSTILE_HOSTNAMES (hostnames del frontend separados por coma, sin localhost en producción)
+    turnstileSecret: '',
+    turnstileHostnames: '',
     public: {
       siteUrl: SITE_URL,
+      siteTarget: SITE_TARGET,
+      siteName: SITE.name,
+      // URL del sitio personal: el de proyectos enlaza a él ("Conoce a Joan")
+      personalUrl: SITES.personal.url,
       // NUXT_PUBLIC_SHOW_PENDING=false oculta los placeholders de contenido pendiente
-      showPending: true
+      showPending: true,
+      // Turnstile (opcional): NUXT_PUBLIC_TURNSTILE_SITE_KEY. Vacío → el formulario no muestra el widget
+      turnstileSiteKey: '',
+      // Analítica de eventos con Umami (opcional): NUXT_PUBLIC_UMAMI_ID. Vacío → no se carga ningún script
+      umamiId: '',
+      umamiHost: 'https://cloud.umami.is'
     }
   },
   app: {
@@ -122,18 +172,19 @@ export default defineNuxtConfig({
         { name: 'theme-color', content: '#f3f4f1' },
         // Open Graph / Facebook
         { property: 'og:type', content: 'website' },
-        { property: 'og:site_name', content: 'Joan Garfias' },
+        { property: 'og:site_name', content: SITE.name },
         { property: 'og:locale', content: 'es_MX' },
         { property: 'og:title', content: SITE_TITLE },
         { property: 'og:description', content: SITE_DESCRIPTION },
-        // Provisional hasta tener la OG image 1200×630 (ver PENDIENTES.md)
-        { property: 'og:image', content: `${SITE_URL}/joan.jpeg` },
-        { property: 'og:image:alt', content: 'Retrato de Joan Garfias' },
+        { property: 'og:image', content: `${SITE_URL}${SITE.ogImage}` },
+        { property: 'og:image:width', content: '1200' },
+        { property: 'og:image:height', content: '630' },
+        { property: 'og:image:alt', content: SITE.ogImageAlt },
         // Twitter
         { name: 'twitter:card', content: 'summary_large_image' },
         { name: 'twitter:title', content: SITE_TITLE },
         { name: 'twitter:description', content: SITE_DESCRIPTION },
-        { name: 'twitter:image', content: `${SITE_URL}/joan.jpeg` },
+        { name: 'twitter:image', content: `${SITE_URL}${SITE.ogImage}` },
       ],
       link: [
         { rel: 'icon', type: 'image/x-icon', href: '/favicon.ico' },
@@ -154,9 +205,15 @@ export default defineNuxtConfig({
     preset: 'cloudflare-pages',
     prerender: {
       crawlLinks: true,
+      // ?motivo= / ?servicio= son la misma página: no se generan aparte (en la raíz además rompen la caché de Nitro)
+      ignore: [(route: string) => route.includes('?')],
       // Los posts entran por crawlLinks desde /blog (los draft no se enlazan, así que no se generan)
-      routes: ['/', '/proyectos', '/habilidades', '/sobre-mi', '/contacto', '/blog', '/blog/rss.xml', ...projectRoutes]
-    }
+      routes: isProyectos
+        ? ['/']
+        : ['/', '/contratame', '/comunidad', '/contacto', '/blog', '/blog/rss.xml', '/proyectos', '/habilidades', '/sobre-mi', ...projectRoutes]
+    },
+    // El sitio de proyectos no tiene blog ni Studio: fuera el RSS y el middleware de Studio
+    ignore: isProyectos ? ['**/routes/blog/**', '**/middleware/studio-session-secret.ts'] : []
   },
   experimental: {
     payloadExtraction: true

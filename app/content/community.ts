@@ -2,6 +2,9 @@
 // placeholder: true → entrada de ejemplo para validar el diseño; se oculta con NUXT_PUBLIC_SHOW_PENDING=false.
 // Reemplázalas por entradas reales (y borra placeholder). Solo las entradas reales generan JSON-LD Event.
 
+import { cifra, metricas } from './metricas'
+import { perfil } from './perfil'
+
 export type CommunityType = 'charla' | 'taller' | 'organizacion' | 'asistente'
 export type CommunityRole = 'ponente' | 'tallerista' | 'moderador' | 'organizador' | 'asistente'
 
@@ -25,6 +28,10 @@ export interface CommunityEntry {
 }
 
 export const communityIntro: string| null = 'Un día una persona se tomó el tiempo de enseñarme algo llamado Algoritmos sin esperar nada a cambio, desde que me di cuenta que eso no fue suerte me esfuerzo por llevar experiencias como esas a más jóvenes.' // 1–2 frases: por qué te importa la comunidad tech en Oaxaca
+
+// Por qué hago comunidad (intro de /comunidad, junto a communityIntro)
+export const communityWhy =
+  'En el Istmo de Tehuantepec las oportunidades en tecnología no llegan igual que a las grandes ciudades. Hago comunidad para acortar esa brecha: que más jóvenes de la región aprendan, construyan y se conecten.'
 
 export const communityEntries: CommunityEntry[] = [
   // Charlas y talleres impartidos con Nexis Oaxaca (fotos: nexisoaxaca.tech/eventos → Memorias)
@@ -145,10 +152,24 @@ export const nexis = {
   role: 'Cofundador',
   description: 'Comunidad de tecnología en el Istmo de Tehuantepec.',
   participation: 'Llevo la visión del proyecto y establezco esquemas de colaboración con instituciones, empresas y otras comunidades tech.' as string | null, // en qué has participado dentro de Nexis (1–2 frases)
-  members: '65+' as string | null, // ej. "120+"
-  events: '30+' as string | null, // ej. "8"
-  url: 'https://nexisoaxaca.tech' as string | null,
-  photo: 'nexis/foto_grupal.jpg' as string | null
+  // Cifras en app/content/metricas.ts
+  members: cifra(metricas.nexisMiembros) as string | null,
+  events: cifra(metricas.nexisEventos) as string | null,
+  url: perfil.enlaces.nexis as string | null,
+  photo: '/nexis/foto_grupal.jpg' as string | null
+}
+
+// Fila de la línea de tiempo de /comunidad: charla, taller, organización o asistencia.
+// Sin fecha (algunos eventos a los que asistí) se muestra el rol en su lugar.
+export interface TimelineItem {
+  id: string
+  type: CommunityType
+  title: string
+  subtitle: string
+  date: string | null
+  role: string
+  photo: string | null
+  url?: string
 }
 
 // Eventos a los que asisto o me invitan (juez, invitado, asistente).
@@ -177,7 +198,7 @@ export const googleAmbassador = {
 }
 
 export const youtube = {
-  channel: 'https://youtube.com/@joan_dev',
+  channel: perfil.enlaces.youtube,
   handle: '@joan_dev',
   videoId: null as string | null, // ID del video destacado, ej. "dQw4w9WgXcQ"
   videoTitle: null as string | null
@@ -197,3 +218,70 @@ export const roleLabels: Record<CommunityRole, string> = {
   organizador: 'Organizador',
   asistente: 'Asistente'
 }
+
+// Roles en comunidad (/comunidad). Las cifras salen de metricas.ts
+export const communityRoles: { id: string; title: string; org: string; text: string; logo?: string; href?: string }[] = [
+  {
+    id: 'nexis',
+    title: 'Cofundador',
+    org: 'Nexis Oaxaca',
+    text: `Comunidad de tecnología en el Istmo con ${cifra(metricas.nexisMiembros)} miembros y ${cifra(metricas.nexisEventos)} eventos.`,
+    logo: '/nexis-green.svg',
+    href: '#nexis'
+  },
+  {
+    id: 'google',
+    title: 'Google Student Ambassador',
+    org: 'Google',
+    text: 'Primera generación del programa de Estudiantes Embajadores de Google, 2026.',
+    logo: '/icons/google.svg'
+  },
+  {
+    id: 'compufest',
+    title: 'Organizador',
+    org: 'CompuFest 26',
+    text: `Segundo foro regional de Computación: 3 días y ${metricas.compufestAsistentes.valor} asistentes.`,
+    href: '#trayectoria'
+  },
+  {
+    id: 'ponente',
+    title: 'Ponente y tallerista',
+    org: 'IA y desarrollo de software',
+    text: `${metricas.charlas.valor} charlas y ${metricas.talleres.valor} talleres en preparatorias, universidades y comunidades de Oaxaca.`,
+    href: '#charlas'
+  }
+]
+
+// Temas que puedo dar: cada uno sale de una charla o taller que ya impartí (ids de communityEntries)
+export const talkTopics: { title: string; text: string; formats: string[]; basedOn: string[] }[] = [
+  {
+    title: 'Usar la IA sin que piense por ti',
+    text: 'Cómo aprovechar asistentes como Gemini con pensamiento crítico, más allá del «copia y pega».',
+    formats: ['Charla'],
+    basedOn: ['ia-no-hace-magia', 'gemini-copia-y-pega']
+  },
+  {
+    title: 'Desarrollar software con agentes de IA',
+    text: 'Planear, delegar y revisar el trabajo de agentes de código, y llevar un primer proyecto a producción.',
+    formats: ['Taller'],
+    basedOn: ['google-antigravity']
+  },
+  {
+    title: 'IA para negocios y emprendimiento',
+    text: 'Cómo sacar más provecho de las herramientas de IA que un negocio ya tiene a la mano.',
+    formats: ['Taller', 'Charla'],
+    basedOn: ['ia-para-tu-negocio']
+  },
+  {
+    title: 'Cómo empezar en programación desde cero',
+    text: 'Una ruta para aprender a programar sin gastar dinero, pensada para estudiantes de preparatoria.',
+    formats: ['Charla'],
+    basedOn: ['programacion-desde-cero']
+  },
+  {
+    title: 'IA, universidad y futuro de la región',
+    text: 'Moderación de paneles sobre tecnología y oportunidades en el Istmo.',
+    formats: ['Panel'],
+    basedOn: ['ia-universidad-futuro-istmo']
+  }
+]

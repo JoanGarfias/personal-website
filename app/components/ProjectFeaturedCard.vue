@@ -43,14 +43,14 @@ const host = computed(() => (props.project.links.live ? new URL(props.project.li
 
     <div class="mt-6 grid gap-6 md:grid-cols-[minmax(0,1fr)_auto] md:items-start">
       <div>
-        <p class="font-meta text-xs uppercase tracking-[0.14em] text-ink-muted">{{ project.number }} · {{ project.year }} · {{ project.role }}</p>
+        <p class="font-meta text-xs uppercase tracking-[0.14em] text-ink-muted">{{ project.number }} · {{ project.year }} · {{ project.tecnico.role }}</p>
         <component :is="props.titleTag ?? 'h3'" class="mt-2 font-display text-3xl font-medium tracking-tight md:text-4xl">
           <NuxtLink :to="project.links.caseStudy" class="featured-title">{{ project.name }}</NuxtLink>
         </component>
         <p class="mt-3 max-w-2xl leading-relaxed text-ink-body">{{ project.summary }}</p>
       </div>
       <div class="flex flex-wrap items-center gap-2 md:justify-end">
-        <span v-if="project.metric" class="metric">{{ project.metric }}</span>
+        <span v-if="project.tecnico.metric" class="metric">{{ project.tecnico.metric }}</span>
         <DraftTag v-if="project.draft" />
       </div>
     </div>
@@ -59,21 +59,21 @@ const host = computed(() => (props.project.links.live ? new URL(props.project.li
       <div>
         <dt class="dl-term">Problema</dt>
         <dd class="text-ink-body">
-          <template v-if="project.problem">{{ project.problem }}</template>
+          <template v-if="project.tecnico.problem">{{ project.tecnico.problem }}</template>
           <PendingText v-else :label="`${project.name}: ¿qué dolía antes?`" />
         </dd>
       </div>
       <div>
         <dt class="dl-term">Decisión</dt>
         <dd class="text-ink-body">
-          <template v-if="project.decision">{{ project.decision }}</template>
+          <template v-if="project.tecnico.decision">{{ project.tecnico.decision }}</template>
           <PendingText v-else :label="`${project.name}: decisión técnica clave y por qué`" />
         </dd>
       </div>
       <div>
         <dt class="dl-term">Resultado</dt>
         <dd class="text-ink-body">
-          <template v-if="project.result">{{ project.result }}</template>
+          <template v-if="project.tecnico.result">{{ project.tecnico.result }}</template>
           <PendingText v-else :label="`${project.name}: qué cambió (solo si ya es real)`" />
         </dd>
       </div>
@@ -81,7 +81,7 @@ const host = computed(() => (props.project.links.live ? new URL(props.project.li
 
     <div class="mt-6 flex flex-wrap items-center justify-between gap-4">
       <ul class="flex flex-wrap gap-2" aria-label="Tecnologías">
-        <li v-for="tech in project.stack" :key="tech" class="chip">{{ tech }}</li>
+        <li v-for="tech in project.tecnico.stack" :key="tech" class="chip">{{ tech }}</li>
       </ul>
       <NuxtLink :to="project.links.caseStudy" class="case-link">
         Ver caso de estudio <span class="sr-only">de {{ project.name }}</span>

@@ -1,22 +1,33 @@
 <script setup lang="ts">
-import { typeLabels, type CommunityEntry, type CommunityType } from '~/content/community'
+import { ArrowUpRight } from 'lucide-vue-next'
+import type { CommunityType, TimelineItem } from '~/content/community'
 import { formatEventDate } from '~/composables/useCommunity'
 
-const props = defineProps<{ entries: CommunityEntry[]; titleTag?: string }>()
+const props = defineProps<{ items: TimelineItem[]; titleTag?: string }>()
 
-const filters: { key: CommunityType | 'todo'; label: string }[] = [
-  { key: 'todo', label: 'Todo' },
-  { key: 'charla', label: 'Charlas' },
-  { key: 'taller', label: 'Talleres' },
-  { key: 'organizacion', label: 'Organización' }
-]
+const typeNames: Record<CommunityType | 'todo', string> = {
+  todo: 'Todo',
+  charla: 'Charlas',
+  taller: 'Talleres',
+  organizacion: 'Organización',
+  asistente: 'Asistencia'
+}
+const itemLabels: Record<CommunityType, string> = {
+  charla: 'Charla',
+  taller: 'Taller',
+  organizacion: 'Organización',
+  asistente: 'Asistencia'
+}
+
+const count = (key: CommunityType | 'todo') =>
+  key === 'todo' ? props.items.length : props.items.filter(e => e.type === key).length
+// Solo los filtros que tienen entradas
+const filters = (Object.keys(typeNames) as (CommunityType | 'todo')[]).filter(key => count(key) > 0)
 
 const active = ref<CommunityType | 'todo'>('todo')
 const visible = computed(() =>
-  active.value === 'todo' ? props.entries : props.entries.filter(e => e.type === active.value)
+  active.value === 'todo' ? props.items : props.items.filter(e => e.type === active.value)
 )
-const count = (key: CommunityType | 'todo') =>
-  key === 'todo' ? props.entries.length : props.entries.filter(e => e.type === key).length
 </script>
 
 <template>
@@ -25,40 +36,51 @@ const count = (key: CommunityType | 'todo') =>
       <component :is="props.titleTag ?? 'h3'" class="font-display text-2xl font-medium tracking-tight">Línea de tiempo</component>
       <div class="flex flex-wrap gap-2" role="group" aria-label="Filtrar por tipo">
         <button
-          v-for="f in filters"
-          :key="f.key"
+          v-for="key in filters"
+          :key="key"
           type="button"
           class="filter-chip"
-          :aria-pressed="active === f.key"
-          @click="active = f.key"
+          :aria-pressed="active === key"
+          @click="active = key"
         >
-          {{ f.label }} <span class="filter-chip__count">({{ count(f.key) }})</span>
+          {{ typeNames[key] }} <span class="filter-chip__count">({{ count(key) }})</span>
         </button>
       </div>
     </div>
 
-    <TransitionGroup v-if="visible.length" tag="ol" name="timeline" class="timeline" aria-live="polite">
+    <p class="sr-only" aria-live="polite">{{ visible.length }} {{ visible.length === 1 ? 'entrada' : 'entradas' }}</p>
+    <TransitionGroup tag="ol" name="timeline" class="timeline">
       <li v-for="(entry, i) in visible" :key="entry.id" class="timeline-item">
         <p class="timeline-item__date">
-          <ContentText :value="formatEventDate(entry.date)" label="fecha" type="dato" />
+          <time v-if="entry.date" :datetime="entry.date">{{ formatEventDate(entry.date) }}</time>
+          <template v-else>{{ entry.role }}</template>
         </p>
-        <span class="timeline-item__dot" :class="{ 'is-latest': i === 0 }" aria-hidden="true"></span>
-        <div class="timeline-item__body">
-          <div class="timeline-item__thumb">
+        <span class="timeline-item__dot" :class="{ 'is-latest': i === 0 && active === 'todo' }" aria-hidden="true"></span>
+        <component
+          :is="entry.url ? 'a' : 'div'"
+          :href="entry.url"
+          :target="entry.url ? '_blank' : undefined"
+          :rel="entry.url ? 'noopener noreferrer' : undefined"
+          class="timeline-item__body"
+          :class="{ 'is-link group': entry.url }"
+        >
+          <span class="timeline-item__thumb">
             <img v-if="entry.photo" :src="entry.photo" alt="" width="56" height="56" loading="lazy" class="h-full w-full object-cover" />
-            <PendingSlot v-else type="foto" ratio="1/1" :label="`Miniatura de ${entry.title}`" />
-          </div>
-          <div class="min-w-0">
-            <p class="text-xs font-medium uppercase tracking-[0.12em] text-accent-ink">{{ typeLabels[entry.type] }}</p>
-            <p class="mt-1 font-display text-lg font-medium text-ink-strong"><ContentText :value="entry.title" /></p>
-            <p class="mt-0.5 text-sm text-ink-muted"><ContentText :value="entry.event" /> · <ContentText :value="entry.city" /></p>
-          </div>
-        </div>
+            <span v-else class="timeline-item__initial" aria-hidden="true">{{ entry.title.charAt(0) }}</span>
+          </span>
+          <span class="min-w-0">
+            <span class="block text-xs font-medium uppercase tracking-[0.12em] text-accent-ink">
+              {{ itemLabels[entry.type] }}<template v-if="entry.date"> · {{ entry.role }}</template>
+            </span>
+            <span class="mt-1 block font-display text-lg font-medium text-ink-strong">
+              {{ entry.title }}<span v-if="entry.url" class="sr-only"> (abre en otra pestaña)</span>
+              <ArrowUpRight v-if="entry.url" class="ml-1 inline h-4 w-4 text-ink-muted transition-colors group-hover:text-accent-ink" aria-hidden="true" />
+            </span>
+            <span class="mt-0.5 block text-sm text-ink-muted">{{ entry.subtitle }}</span>
+          </span>
+        </component>
       </li>
     </TransitionGroup>
-    <p v-else class="rounded-card border border-dashed border-line p-6 text-ink-muted" aria-live="polite">
-      Todavía no hay entradas de este tipo.
-    </p>
   </div>
 </template>
 
@@ -158,11 +180,21 @@ const count = (key: CommunityType | 'todo') =>
 }
 
 .timeline-item__thumb {
-  --pending-radius: var(--radius-card-sm);
+  display: grid;
   aspect-ratio: 1;
   overflow: hidden;
+  place-items: center;
   border-radius: var(--radius-card-sm);
+  background: var(--surface-2);
 }
+
+.timeline-item__initial {
+  color: var(--text-muted);
+  font-family: var(--font-heading);
+  font-size: 1.25rem;
+}
+
+.timeline-item__body.is-link:hover .text-ink-strong { color: var(--accent-ink); }
 
 .timeline-enter-active,
 .timeline-leave-active { transition: opacity 300ms var(--ease-brand), transform 300ms var(--ease-brand); }

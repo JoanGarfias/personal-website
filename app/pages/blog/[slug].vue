@@ -1,8 +1,8 @@
 <script setup lang="ts">
 import { ArrowLeft, ArrowRight, ArrowUpRight } from 'lucide-vue-next'
+import { perfil } from '~/content/perfil'
 
 const route = useRoute()
-const appConfig = useAppConfig()
 const { siteUrl } = useRuntimeConfig().public
 const path = `/blog/${route.params.slug}`
 
@@ -26,6 +26,16 @@ const { data: surround } = await useAsyncData(`blog-surround-${path}`, () =>
 )
 const newer = computed(() => surround.value?.[0] ?? null)
 const older = computed(() => surround.value?.[1] ?? null)
+
+// Relacionados: etiquetas en común y misma categoría (app/utils/blog.ts → relatedPosts)
+const { data: candidates } = await useAsyncData(`blog-related-${path}`, () =>
+  queryCollection('blog')
+    .where('draft', '=', false)
+    .select('path', 'title', 'description', 'date', 'tags', 'categoria')
+    .all()
+    .catch(() => [])
+)
+const related = computed(() => (post.value && candidates.value ? relatedPosts(post.value, candidates.value) : []))
 
 // Índice solo si el post tiene 3 o más encabezados (h2 + h3)
 type TocLink = { id: string; text: string; children?: TocLink[] }
@@ -75,8 +85,8 @@ useHead({
       dateModified: new Date(p.updated ?? p.date).toISOString(),
       inLanguage: 'es-MX',
       keywords: p.tags.join(', '),
-      author: { '@type': 'Person', name: appConfig.person.name, url: `${siteUrl}/` },
-      publisher: { '@type': 'Person', name: appConfig.person.name, url: `${siteUrl}/` }
+      author: { '@type': 'Person', name: perfil.nombre, url: `${siteUrl}/` },
+      publisher: { '@type': 'Person', name: perfil.nombre, url: `${siteUrl}/` }
     })
   }]
 })
@@ -92,6 +102,10 @@ useHead({
     <article class="mx-auto max-w-[45rem]">
       <header class="space-y-6">
         <p class="flex flex-wrap items-center gap-x-3 gap-y-1 text-sm text-ink-muted">
+          <NuxtLink :to="{ path: '/blog', query: { categoria: post.categoria } }" class="font-medium text-accent-ink hover:underline">
+            {{ BLOG_CATEGORIAS[post.categoria] }}
+          </NuxtLink>
+          <span aria-hidden="true">·</span>
           <time :datetime="isoDate(post.date)">{{ formatPostDate(post.date) }}</time>
           <template v-if="post.readingTime">
             <span aria-hidden="true">·</span>
@@ -105,7 +119,9 @@ useHead({
         <h1 class="post-title">{{ post.title }}</h1>
         <p class="text-xl leading-8 text-ink-body">{{ post.description }}</p>
         <ul v-if="post.tags.length" class="flex flex-wrap gap-2" aria-label="Etiquetas">
-          <li v-for="tag in post.tags" :key="tag" class="chip">{{ tag }}</li>
+          <li v-for="tag in post.tags" :key="tag">
+            <NuxtLink :to="{ path: '/blog', query: { tag } }" class="chip chip--link">#{{ tag }}</NuxtLink>
+          </li>
         </ul>
       </header>
 
@@ -148,10 +164,26 @@ useHead({
         </NuxtLink>
       </nav>
 
+      <section v-if="related.length" class="post-related" aria-labelledby="related-title">
+        <h2 id="related-title" class="post-toc__title">También te puede interesar</h2>
+        <ul class="grid gap-4">
+          <li v-for="r in related" :key="r.path">
+            <NuxtLink :to="r.path" class="post-related__link card group">
+              <span class="text-xs font-medium uppercase tracking-[0.12em] text-accent-ink">{{ BLOG_CATEGORIAS[r.categoria] }}</span>
+              <span class="post-pager__title">{{ r.title }}</span>
+              <span class="text-sm leading-6 text-ink-muted">{{ r.description }}</span>
+            </NuxtLink>
+          </li>
+        </ul>
+      </section>
+
       <aside class="post-cta" aria-labelledby="post-cta-title">
-        <h2 id="post-cta-title" class="font-display text-2xl font-medium text-white">¿Te sirvió o tienes un proyecto en mente?</h2>
-        <p class="my-4 text-sm leading-6 text-white/70">Escríbeme y conversemos sobre el problema, el alcance y la mejor forma de construirlo.</p>
-        <NuxtLink to="/contacto" class="button-primary group">Hablemos <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" /></NuxtLink>
+        <h2 id="post-cta-title" class="font-display text-2xl font-medium text-white">¿Te sirvió? Hablemos.</h2>
+        <p class="my-4 text-sm leading-6 text-white/70">Busco un puesto junior de backend, full-stack o cloud, y también me puedes invitar a dar una charla.</p>
+        <div class="flex flex-wrap gap-3">
+          <NuxtLink to="/contratame" class="button-primary group" data-evento="post-contratame">Contrátame <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" /></NuxtLink>
+          <NuxtLink to="/contacto?motivo=evento" class="button-light group" data-evento="post-evento">Invítame a tu evento</NuxtLink>
+        </div>
       </aside>
     </article>
   </div>
@@ -226,6 +258,25 @@ useHead({
   font-weight: 500;
   line-height: 1.3;
 }
+
+.post-related { margin-top: 3rem; }
+
+.post-related__link {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.1rem 1.25rem;
+  transition: border-color 200ms var(--ease-brand);
+}
+
+.post-related__link:hover { border-color: var(--border-strong); }
+
+.chip--link {
+  display: inline-flex;
+  min-height: 2rem;
+  align-items: center;
+  font-family: var(--font-meta);
+}
+.chip--link:hover { border-color: var(--text-strong); color: var(--text-strong); }
 
 .post-cta {
   margin-top: 3rem;

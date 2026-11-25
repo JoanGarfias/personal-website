@@ -1,13 +1,14 @@
 <script setup lang="ts">
 import { ArrowUpRight, FileDown, Github, Linkedin, Youtube } from 'lucide-vue-next'
-import { projects } from '~/content/projects'
+import { perfil } from '~/content/perfil'
+import { personalProjects as projects } from '~/content/projects'
 
 const portrait = { src: '/joan.jpeg', width: 1440, height: 1440, alt: 'Retrato de Joan Garfias' }
 
 const socials = [
-  { label: 'GitHub', href: 'https://github.com/JoanGarfias', icon: Github },
-  { label: 'LinkedIn', href: 'https://linkedin.com/in/joangarfias', icon: Linkedin },
-  { label: 'YouTube', href: 'https://youtube.com/@joan-garfias', icon: Youtube }
+  { label: 'GitHub', href: perfil.enlaces.github, icon: Github },
+  { label: 'LinkedIn', href: perfil.enlaces.linkedin, icon: Linkedin },
+  { label: 'YouTube', href: perfil.enlaces.youtube, icon: Youtube }
 ]
 
 // Al recorrer los proyectos la tarjeta muestra el proyecto en pantalla; en un caso de estudio, ese proyecto.
@@ -36,20 +37,20 @@ const onCaseStudy = computed(() => !!project.value && project.value.slug === rou
         <div class="profile-card__body">
           <p class="profile-card__status">
             <span class="pulse-dot" aria-hidden="true"></span>
-            Disponible para colaborar
+            {{ perfil.disponibilidad.estado }}
           </p>
           <p class="profile-card__hello mt-4">
             Hola, soy <span class="text-white">Joan</span>
           </p>
           <p class="mt-3 max-w-[30ch] text-[0.9375rem] leading-relaxed text-white/75">
-            Desarrollador de software interesado en backend, cloud e IA, desde Oaxaca, México.
+            {{ perfil.titular }} desde el Istmo de Tehuantepec, Oaxaca. {{ perfil.disponibilidad.egreso }}.
           </p>
 
           <div class="mt-6 flex flex-wrap items-center gap-3 border-t border-white/15 pt-5">
-            <NuxtLink to="/#contacto" class="button-primary group">
-              Hablemos <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" />
+            <NuxtLink to="/contratame" class="button-primary group" data-evento="tarjeta-contratame">
+              Contrátame <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" />
             </NuxtLink>
-            <a href="/cv.pdf" download="CV_Joan_Garfias.pdf" class="inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-white/80 transition-colors hover:text-white">
+            <a :href="perfil.enlaces.cv" :download="perfil.enlaces.cvNombre" data-evento="cv" class="inline-flex min-h-11 items-center gap-2 px-2 text-sm font-medium text-white/80 transition-colors hover:text-white">
               <FileDown class="h-4 w-4" aria-hidden="true" /> Descargar CV
             </a>
           </div>
@@ -79,12 +80,12 @@ const onCaseStudy = computed(() => !!project.value && project.value.slug === rou
             </div>
             <div>
               <dt class="text-xs text-white/55">Rol</dt>
-              <dd class="mt-1 text-lg font-medium text-white">{{ project.role }}</dd>
+              <dd class="mt-1 text-lg font-medium text-white">{{ project.tecnico.role }}</dd>
             </div>
           </dl>
 
           <ul class="mt-6 flex flex-wrap gap-2" aria-label="Tecnologías">
-            <li v-for="tech in project.stack.slice(0, 5)" :key="tech" class="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85">{{ tech }}</li>
+            <li v-for="tech in project.tecnico.stack.slice(0, 5)" :key="tech" class="rounded-full bg-white/10 px-3 py-1 text-xs font-medium text-white/85">{{ tech }}</li>
           </ul>
 
           <div class="mt-auto flex items-center justify-between gap-3 pt-8">
@@ -97,7 +98,7 @@ const onCaseStudy = computed(() => !!project.value && project.value.slug === rou
             >
               Ver en vivo<span class="sr-only"> (abre en otra pestaña)</span> <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" />
             </a>
-            <NuxtLink v-else-if="onCaseStudy" to="/#contacto" class="button-light group">
+            <NuxtLink v-else-if="onCaseStudy" to="/contacto?motivo=empleo" class="button-light group">
               Hablemos <ArrowUpRight class="arrow-swap h-4 w-4" aria-hidden="true" />
             </NuxtLink>
             <NuxtLink v-else :to="project.links.caseStudy" class="button-light group">

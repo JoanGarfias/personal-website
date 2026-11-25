@@ -7,13 +7,13 @@ export const aboutQuote =
 
 export const aboutParagraphs: { text: string; draft?: boolean }[] = [
   {
-    text: 'He trabajado en sistemas para salud, construcción, hotelería y transporte. Disfruto entender un problema a fondo, diseñar la solución y llevarla a producción.'
+    text: 'Soy de Santo Domingo Tehuantepec, en el Istmo de Oaxaca. Estudio Ingeniería en Computación en la Universidad del Istmo y egreso en junio de 2027.'
   },
   {
-    text: 'Me interesan los roles donde la tecnología y las personas se cruzan: ingeniería de software, developer relations, soluciones técnicas y producto.'
+    text: 'Me mueve construir soluciones a problemas reales y abrir oportunidades en mi región. Por eso, además de programar, cofundé Nexis Oaxaca, una comunidad de tecnología en el Istmo.'
   },
   {
-    text: 'Estoy en el último año de Ingeniería en Computación en la UNISTMO. Si estás construyendo algo en el sur de México o quieres conectar con su talento, escríbeme.'
+    text: 'He trabajado en sistemas para hotelería, automotriz, transporte y salud. Disfruto entender un problema a fondo, diseñar la solución y llevarla a producción.'
   }
 ]
 
@@ -23,6 +23,7 @@ export const aboutCredentials: { label: string; icon?: string; iconAlt?: string;
   { label: 'INROADER', icon: 'inroads-mexico.png', iconAlt: 'INROADS México', wide: true }
 ]
 
+// Tres principios de trabajo (sección "Cómo trabajo" del Inicio)
 export const aboutCards: { title: string; text: string; draft: boolean }[] = [
   {
     title: 'Leo el juego antes de mover',

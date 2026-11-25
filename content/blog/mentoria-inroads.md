@@ -7,6 +7,7 @@ description: ¿Lavas tu taza? Lo que me llevo de mi mentoría en INROADS México
 seo:
   title: Un resumen de lo que viví en las mentorias de Inroads México A.C
 date: '2026-12-21'
+categoria: reflexiones
 ---
 
 > "¿Tú eres de los que lavan su taza o de los que la dejan para que alguien de limpieza se encargue?"
