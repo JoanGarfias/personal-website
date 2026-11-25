@@ -1,9 +1,9 @@
 ---
 title: Cómo construí la plataforma de eventos de Nexis Oaxaca en 7 horas
-description: Dejamos Meetup y armé una versión propia y acotada con Nuxt, Cloudflare Workers, Supabase y agentes de código. Qué decidí, cómo repartí el trabajo entre agentes y en qué me atoré.
 cover: /images/blog/nexis-oaxaca-en-7-horas/plataforma.png
 coverAlt: 'Portada de la plataforma de Nexis Oaxaca: “Descubre hasta dónde puedes llegar en tecnología.”, con la iguana de circuitos y el acceso a Mi cuenta'
 date: '2026-11-15'
+description: Dejamos Meetup y armé una versión propia y acotada con Nuxt, Cloudflare Workers, Supabase y agentes de código. Qué decidí, cómo repartí el trabajo entre agentes y en qué me atoré.
 draft: false
 tags:
   - nuxt
@@ -11,7 +11,6 @@ tags:
   - supabase
   - claude-code
   - agentes
-categoria: tecnico
 ---
 
 En [Nexis Oaxaca](https://nexisoaxaca.tech) organizamos encuentros, charlas y talleres de tecnología. Durante un buen tiempo los gestionamos en Meetup, y funcionaba, pero llegó un punto en el que dejó de tener sentido. Este post cuenta cómo lo reemplacé con una plataforma propia en unas 7 horas de trabajo, apoyándome en agentes de código.
@@ -63,14 +62,14 @@ Para que los agentes no se pisaran, el repositorio tenía un `CLAUDE.md` con la 
 
 ## El stack y por qué
 
-| Pieza | Para qué |
-|---|---|
-| **Nuxt 4** | Un solo proyecto para el sitio, la cuenta del usuario y el panel |
-| **Cloudflare Workers** | Hosting y API en el plan gratuito, sin servidores que mantener |
-| **Supabase** | Autenticación (correo y Google) y PostgreSQL |
-| **Cloudflare R2** | Flyers, fotos y logos |
-| **Resend** | Correos de bienvenida y gafetes |
-| **Turnstile** | Frenar bots en los formularios |
+| Pieza                  | Para qué                                                         |
+| ---------------------- | ---------------------------------------------------------------- |
+| **Nuxt 4**             | Un solo proyecto para el sitio, la cuenta del usuario y el panel |
+| **Cloudflare Workers** | Hosting y API en el plan gratuito, sin servidores que mantener   |
+| **Supabase**           | Autenticación (correo y Google) y PostgreSQL                     |
+| **Cloudflare R2**      | Flyers, fotos y logos                                            |
+| **Resend**             | Correos de bienvenida y gafetes                                  |
+| **Turnstile**          | Frenar bots en los formularios                                   |
 
 No cada página se sirve igual. Las páginas informativas se prerenderizan, los eventos se renderizan en el servidor con caché de 60 segundos para que un evento nuevo aparezca rápido, y la cuenta y el panel corren solo en el cliente porque dependen de la sesión:
 
@@ -126,7 +125,7 @@ Al final del día, Nexis Oaxaca tiene una plataforma propia:
 - **Control sobre todo el código.** Conozco el stack de punta a punta, así que cualquier cambio lo podemos hacer sin depender de nadie.
 - **Nada se perdió en la migración:** los 30 encuentros del CMS anterior pasaron a la nueva base, con sus ponentes, galerías y grabaciones, y las URLs viejas redirigen a las nuevas.
 
-![Portada de la plataforma de Nexis Oaxaca: “Descubre hasta dónde puedes llegar en tecnología.”, con la iguana de circuitos y el acceso a Mi cuenta](/images/blog/nexis-oaxaca-en-7-horas/plataforma.png){width="1885" height="923"}
+![Portada de la plataforma de Nexis Oaxaca: “Descubre hasta dónde puedes llegar en tecnología.”, con la iguana de circuitos y el acceso a Mi cuenta](/images/blog/nexis-oaxaca-en-7-horas/plataforma.png){height="923" width="1885"}
 
 ## Lo que me llevo
 
