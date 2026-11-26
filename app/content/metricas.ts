@@ -34,7 +34,7 @@ export const metricas = {
   nexisMiembros: { id: 'nexis-miembros', valor: 72, sufijo: '+', texto: 'miembros en Nexis Oaxaca' },
   nexisEventos: { id: 'nexis-eventos', valor: 30, sufijo: '+', texto: 'eventos de Nexis Oaxaca' },
   charlas: { id: 'charlas', valor: 4, texto: 'charlas sobre IA y desarrollo de software', fuente: '/comunidad' },
-  talleres: { id: 'talleres', valor: 2, texto: 'talleres sobre IA y desarrollo de software', fuente: '/comunidad' }
+  talleres: { id: 'talleres', valor: 3, texto: 'talleres sobre IA y desarrollo de software', fuente: '/comunidad' }
 } satisfies Record<string, Metrica>
 
 // "72+", "−30%": la cifra como texto, para donde no hay animación

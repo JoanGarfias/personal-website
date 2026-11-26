@@ -6,7 +6,7 @@ import { cifra, metricas } from './metricas'
 import { perfil } from './perfil'
 
 export type CommunityType = 'charla' | 'taller' | 'organizacion' | 'asistente'
-export type CommunityRole = 'ponente' | 'tallerista' | 'moderador' | 'organizador' | 'asistente'
+export type CommunityRole = 'ponente' | 'tallerista' | 'mentor' | 'moderador' | 'organizador' | 'asistente'
 
 export interface CommunityEntry {
   id: string
@@ -35,6 +35,20 @@ export const communityWhy =
 
 export const communityEntries: CommunityEntry[] = [
   // Charlas y talleres impartidos con Nexis Oaxaca (fotos: nexisoaxaca.tech/eventos → Memorias)
+  {
+    id: 'mentoria-disruptic-hackathon',
+    type: 'taller',
+    title: 'Mentoría: Cómo desplegar tu proyecto a coste $0 para la demo de tu hackathon',
+    event: 'DISRUPTIC Hackathon · Instituto Tecnológico de Salina Cruz',
+    city: 'Salina Cruz',
+    date: '2026-11-25',
+    role: 'mentor',
+    audience: '25 asistentes',
+    takeaway: 'Mentoría práctica para llevar un proyecto de hackathon a producción sin gastar un peso ni usar tarjeta: Cloudflare (Pages, Workers, almacenamiento y secrets conectados a GitHub) y el GitHub Student Developer Pack para levantar un backend en Node o PHP con base de datos gratuita en Heroku, con CI/CD automático y listo para la demo.',
+    photo: '/community/mentoria-disruptic-hackathon/1.jpg',
+    gallery: [2, 3, 4, 5, 6].map(n => `/community/mentoria-disruptic-hackathon/${n}.jpg`),
+    url: 'https://nexisoaxaca.tech/eventos/como-desplegar-tu-proyecto-a-coste-0-para-la-demo-de-tu-hackathon'
+  },
   {
     id: 'compufest-26',
     type: 'organizacion',
@@ -214,6 +228,7 @@ export const typeLabels: Record<CommunityType, string> = {
 export const roleLabels: Record<CommunityRole, string> = {
   ponente: 'Ponente',
   tallerista: 'Tallerista',
+  mentor: 'Mentor',
   moderador: 'Moderador',
   organizador: 'Organizador',
   asistente: 'Asistente'
