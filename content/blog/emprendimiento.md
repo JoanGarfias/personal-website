@@ -90,7 +90,7 @@ Después de Pabluchis lo intenté otra vez, ahora con una empresa de software, y
 
 Lo irónico es que terminé emprendiendo algo que nunca imaginé: un proyecto social. Me enteré de que eso era Nexis Oaxaca meses después de haberlo empezado.
 
-Si hay algo que me llevo de esos bolis sin sabor es esto: **no tienes que estar listo para empezar; empezar es lo que te prepara.** Si en 2022 hubiera esperado a estar listo, nunca habría hecho nada.
+Si hay algo que me llevo de esos bolis sin sabor es esto: **no tienes que estar listo para empezar; empezar es lo que te prepara.** Si en 2021 hubiera esperado a estar listo, nunca habría hecho nada.
 
 Mi negocio duró año y medio, pero lo que aprendí ahí lo sigo usando hasta hoy.
 
