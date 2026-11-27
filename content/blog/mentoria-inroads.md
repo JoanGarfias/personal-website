@@ -3,7 +3,7 @@ title: Mi paso en las mentorias de INROADS México
 categoria: reflexiones
 cover: /images/blog/inroads/1794619556279.jpeg
 coverAlt: Charla con Carlos Edgardo
-date: '2026-12-21'
+date: '2026-11-20'
 description: ¿Lavas tu taza? Lo que me llevo de mi mentoría en INROADS México ☕
 draft: false
 seo:
