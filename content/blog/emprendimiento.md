@@ -1,5 +1,6 @@
 ---
 cover: /images/blog/pabluchis/imagen2021.jpeg
+coverAlt: Selfie en el autobús durante el viaje de 2021
 tags: []
 title: Cuatro días, 100 pesos y un producto sin sabor
 description: La historia de Productos Pabluchis, mi primer emprendimiento
