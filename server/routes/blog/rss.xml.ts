@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
   <channel>
     <title>Blog de Joan Garfias</title>
     <link>${siteUrl}/blog</link>
-    <description>Notas sobre backend, cloud, comunidad y lo que aprendo construyendo software desde Oaxaca.</description>
+    <description>Historias, reflexiones y lo que voy aprendiendo en el camino, entre software, IA y lo que me deja cada experiencia.</description>
     <language>es-MX</language>
     <atom:link href="${siteUrl}/blog/rss.xml" rel="self" type="application/rss+xml" />
 ${posts[0] ? `    <lastBuildDate>${new Date(posts[0].date).toUTCString()}</lastBuildDate>\n` : ''}${items.join('\n')}

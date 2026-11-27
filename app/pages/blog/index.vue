@@ -15,7 +15,7 @@ const { data: posts } = await useAsyncData('blog-index', () =>
 )
 
 const title = 'Blog | Joan Garfias'
-const description = 'Notas sobre backend, cloud, comunidad y lo que aprendo construyendo software desde Oaxaca.'
+const description = 'Historias, reflexiones y lo que voy aprendiendo en el camino, entre software, IA y lo que me deja cada experiencia.'
 
 useSeoMeta({
   title,
