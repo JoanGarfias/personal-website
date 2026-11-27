@@ -11,6 +11,7 @@ seo:
 tags:
   - reflexion
   - mentoria
+  - ''
 ---
 
 > "¿Tú eres de los que lavan su taza o de los que la dejan para que alguien de limpieza se encargue?"
