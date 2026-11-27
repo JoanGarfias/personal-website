@@ -2,3 +2,5 @@ allowBuilds:
   '@parcel/watcher': false
   esbuild: false
   sharp: false
+patchedDependencies:
+  nuxt-studio@1.8.0: patches/nuxt-studio@1.8.0.patch
