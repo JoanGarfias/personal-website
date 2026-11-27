@@ -2,10 +2,12 @@
 title: Cuatro días, 100 pesos y un producto sin sabor
 categoria: reflexiones
 cover: /images/blog/pabluchis/foto-joan-pabluchis.jpeg
-coverAlt: Selfie en el autobús durante el viaje de 2021
+coverAlt: Una foto mia afuera de un punto de venta, con mi hielera y mi camisa de Pabluchis
 date: '2026-11-25'
 description: La historia de Productos Pabluchis, mi primer emprendimiento
 draft: false
+tags:
+  - emprendimiento
 ---
 
 Antes de empezar quiero aclarar algo: esta no es una historia de "vengo desde abajo". Crecí en una familia a la que no le faltaba nada, pero que tampoco vivía con lujos. Si buscas una historia de superación económica, esta no es. Lo que te voy a contar es más pequeño, y para mí, más importante: cómo descubrí que sí sabía hacer algo.
